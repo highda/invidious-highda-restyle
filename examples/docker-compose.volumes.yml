@@ -1,0 +1,8 @@
+# Serve the overlay files from Invidious' own static asset folder (read-only mounts).
+# Paths on the left are relative to this repository checkout.
+services:
+  invidious:
+    volumes:
+      - ./dist/theme.css:/invidious/assets/css/restyle.css:ro   # -> /css/restyle.css
+      - ./dist/app.js:/invidious/assets/js/restyle.js:ro        # -> /js/restyle.js
+      - ./dist/sw.js:/invidious/assets/sw.js:ro                 # -> /sw.js (must stay at the root)

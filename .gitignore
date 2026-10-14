@@ -1,0 +1,31 @@
+# dist/ is committed on purpose: it is what gets mounted into Invidious.
+
+# Python (build.py)
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Node tooling, if any is added later
+node_modules/
+
+# local overrides / secrets that must never be published
+.env
+.env.*
+*.local.*
+local/
+
+# logs and scratch
+*.log
+*.tmp
+*.bak
+*.orig
+*.swp
+*~
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.code-workspace

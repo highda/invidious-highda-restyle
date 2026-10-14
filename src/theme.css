@@ -1,0 +1,3214 @@
+/*
+ * invidious-highda-restyle: theme stylesheet
+ * Loaded after Invidious' own stylesheets (see README.md for the injection).
+ * Built into dist/theme.css by build.py (adds the icon block).
+ *
+ * Specificity note: Invidious styles links/buttons with `.light-theme a`,
+ * `.dark-theme a:hover {... !important}` etc. Every themed rule here is
+ * prefixed with `:root body[class]` (0,2,1) so it wins without an
+ * !important arms race; !important is only used where Invidious uses it.
+ */
+
+/* ---------- tokens ---------- */
+
+:root {
+  --r-xs: 6px;
+  --r-sm: 10px;
+  --r-md: 16px;
+  --r-lg: 22px;
+  --r-pill: 999px;
+  --font: "Inter", "Roboto", "Segoe UI Variable Text", "Segoe UI", system-ui,
+    -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+  --ease: cubic-bezier(.2, .7, .2, 1);
+}
+
+body.light-theme,
+body.no-theme {
+  color-scheme: light;
+  --bg: #f3f4f8;
+  --surface: #ffffff;
+  --surface-2: #eceef4;
+  --surface-3: #e1e4ec;
+  --text: #191b21;
+  --text-2: #474c58;
+  --text-3: #6f7482;
+  --outline: rgba(22, 27, 45, .10);
+  --outline-strong: rgba(22, 27, 45, .18);
+  --accent: #5146d8;
+  --accent-hover: #4339c4;
+  --on-accent: #ffffff;
+  --accent-soft: #e7e5ff;
+  --on-accent-soft: #2b2185;
+  --danger: #d93644;
+  --logo-bg: #5146d8;
+  --scrim: rgba(243, 244, 248, .82);
+  --sh-1: 0 1px 2px rgba(18, 24, 40, .06), 0 1px 3px rgba(18, 24, 40, .08);
+  --sh-2: 0 2px 4px rgba(18, 24, 40, .05), 0 6px 16px rgba(18, 24, 40, .08);
+  --sh-3: 0 6px 12px rgba(18, 24, 40, .07), 0 16px 36px rgba(18, 24, 40, .14);
+}
+
+body.dark-theme {
+  color-scheme: dark;
+  --bg: #0f1013;
+  --surface: #191a1f;
+  --surface-2: #23242b;
+  --surface-3: #2d2f37;
+  --text: #e9eaef;
+  --text-2: #b7bac5;
+  --text-3: #8b8f9c;
+  --outline: rgba(255, 255, 255, .07);
+  --outline-strong: rgba(255, 255, 255, .14);
+  --accent: #a9a3ff;
+  --accent-hover: #bcb7ff;
+  --on-accent: #17114f;
+  --accent-soft: #2c2858;
+  --on-accent-soft: #dddaff;
+  --danger: #ff6b76;
+  --logo-bg: #6c62f0;
+  --scrim: rgba(15, 16, 19, .78);
+  --sh-1: 0 1px 2px rgba(0, 0, 0, .35), 0 1px 3px rgba(0, 0, 0, .25);
+  --sh-2: 0 2px 4px rgba(0, 0, 0, .3), 0 8px 18px rgba(0, 0, 0, .35);
+  --sh-3: 0 8px 16px rgba(0, 0, 0, .35), 0 18px 40px rgba(0, 0, 0, .5);
+}
+
+@media (prefers-color-scheme: dark) {
+  body.no-theme {
+    color-scheme: dark;
+    --bg: #0f1013;
+    --surface: #191a1f;
+    --surface-2: #23242b;
+    --surface-3: #2d2f37;
+    --text: #e9eaef;
+    --text-2: #b7bac5;
+    --text-3: #8b8f9c;
+    --outline: rgba(255, 255, 255, .07);
+    --outline-strong: rgba(255, 255, 255, .14);
+    --accent: #a9a3ff;
+    --accent-hover: #bcb7ff;
+    --on-accent: #17114f;
+    --accent-soft: #2c2858;
+    --on-accent-soft: #dddaff;
+    --logo-bg: #6c62f0;
+    --scrim: rgba(15, 16, 19, .78);
+    --sh-1: 0 1px 2px rgba(0, 0, 0, .35), 0 1px 3px rgba(0, 0, 0, .25);
+    --sh-2: 0 2px 4px rgba(0, 0, 0, .3), 0 8px 18px rgba(0, 0, 0, .35);
+    --sh-3: 0 8px 16px rgba(0, 0, 0, .35), 0 18px 40px rgba(0, 0, 0, .5);
+  }
+}
+
+/* ---------- base ---------- */
+
+html,
+:root body[class] {
+  font-family: var(--font);
+}
+
+:root body[class] {
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  scrollbar-color: var(--surface-3) transparent;
+}
+
+:root body[class] ::selection {
+  background: var(--accent-soft);
+  color: var(--on-accent-soft);
+}
+
+/* the 2/20/2 pure grid around #contents wastes space on wide screens */
+:root body[class] > .pure-g > .pure-u-md-2-24 {
+  display: none;
+}
+
+:root body[class] #contents {
+  width: 100%;
+  max-width: 1760px;
+  margin: 0 auto;
+  padding: 0 clamp(.5rem, 2vw, 1.75rem);
+  box-sizing: border-box;
+}
+
+:root body[class] h1,
+:root body[class] h2,
+:root body[class] h3,
+:root body[class] h4,
+:root body[class] h5 {
+  color: var(--text);
+  letter-spacing: -.01em;
+}
+
+:root body[class] hr {
+  border: 0;
+  border-top: 1px solid var(--outline);
+  margin: 1rem 0;
+}
+
+:root body[class] a,
+:root body[class] .simulated_a {
+  color: var(--text-2);
+  text-decoration: none;
+  transition: color .15s var(--ease);
+}
+
+:root body[class] a:hover,
+:root body[class] a:active,
+:root body[class] a:focus,
+:root body[class] summary:hover,
+:root body[class] summary:focus,
+:root body[class] .simulated_a:hover,
+:root body[class] .simulated_a:active {
+  color: var(--accent) !important;
+}
+
+:root body[class] a:not([data-id]) > .icon {
+  color: inherit;
+}
+
+:root body[class] :focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--r-xs);
+}
+
+/* ---------- top app bar ---------- */
+
+:root body[class] .navbar {
+  position: sticky;
+  top: .6rem;
+  z-index: 1000;
+  display: grid;
+  /* outer columns size to their content, search takes the rest */
+  grid-template-columns: max-content minmax(0, 1fr) max-content;
+  align-items: center;
+  gap: 1.25rem;
+  margin: .6rem 0 1.25rem;
+  padding: .55rem .75rem .55rem 1rem;
+  background: var(--scrim);
+  -webkit-backdrop-filter: saturate(1.6) blur(14px);
+  backdrop-filter: saturate(1.6) blur(14px);
+  border: 1px solid var(--outline);
+  border-radius: var(--r-lg);
+  box-shadow: var(--sh-2);
+}
+
+:root body[class] .navbar > div {
+  width: auto;
+  margin: 0;
+}
+
+/* scroll-aware header (html.iv-nav-hidden is set by app.js; without JS it just stays sticky) */
+:root body[class] .navbar {
+  transition: transform .32s cubic-bezier(.2, .7, .2, 1), opacity .25s ease,
+    box-shadow .2s ease;
+}
+
+:root.iv-nav-hidden body[class] .navbar {
+  transform: translateY(calc(-100% - 1.25rem));
+  opacity: 0;
+  box-shadow: none;
+  pointer-events: none;
+}
+
+/* search homepage: Invidious renders only the account actions in the bar */
+:root body[class] .navbar:not(:has(.searchbar)) {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+:root body[class] .navbar > .user-field:only-child {
+  grid-column: 1 / -1;
+  justify-self: end;
+}
+
+/* logo cell: flex, otherwise the inline-flex link sits on a text baseline
+   and the line box adds descender space below it (logo ~2px too high) */
+:root body[class] .navbar > div:first-child {
+  display: flex;
+  align-items: center;
+}
+
+:root body[class] .navbar .index-link {
+  line-height: 1;
+}
+
+:root body[class] .navbar .index-link {
+  display: inline-flex;
+  align-items: center;
+  gap: .55rem;
+  padding: 0;
+  color: var(--text);
+  font-size: 1.15rem;
+  font-weight: 750;
+  letter-spacing: -.02em;
+  text-transform: none;
+}
+
+:root body[class] .navbar .index-link::before {
+  content: "";
+  flex: none;
+  width: 32px;
+  height: 22px;
+  border-radius: 7px;
+  background: var(--logo-bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23fff' d='M8 5v14l11-7z'/%3E%3C/svg%3E") center / 14px no-repeat;
+  box-shadow: 0 2px 6px rgba(81, 70, 216, .35);
+}
+
+/* search: one pill containing input + button */
+:root body[class] .searchbar .pure-form {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 680px;
+  margin: 0 auto;
+  background: var(--surface-2);
+  border: 1px solid transparent;
+  border-radius: var(--r-pill);
+  transition: background .15s var(--ease), border-color .15s var(--ease), box-shadow .15s var(--ease);
+}
+
+:root body[class] .searchbar .pure-form:focus-within {
+  background: var(--surface);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-soft);
+}
+
+:root body[class] .searchbar input[type="search"],
+:root body[class] .searchbar #searchbox#searchbox {
+  height: 42px;
+  margin: 0;
+  padding: 0 .25rem 0 1.15rem;
+  background: transparent;
+  color: var(--text);
+  border: 0;
+  border-radius: var(--r-pill);
+  box-shadow: none;
+  font-size: .95rem;
+}
+
+:root body[class] .searchbar input[type="search"]:focus,
+:root body[class] .searchbar #searchbox#searchbox:focus {
+  margin: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  box-shadow: none;
+}
+
+:root body[class] .searchbar input::placeholder {
+  color: var(--text-3);
+}
+
+:root body[class] .searchbar #searchbutton {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 42px;
+  height: 42px;
+  margin: 0;
+  padding: 0;
+  color: var(--text-2);
+  border-radius: var(--r-pill);
+  cursor: pointer;
+}
+
+:root body[class] .searchbar #searchbutton:hover {
+  color: var(--accent);
+  background: var(--surface-3);
+}
+
+/* right-hand actions */
+:root body[class] .user-field {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: .25rem;
+  font-size: 1rem;
+}
+
+:root body[class] .user-field > div {
+  width: auto;
+  margin: 0 !important;
+}
+
+:root body[class] .user-field a.pure-menu-heading,
+:root body[class] .user-field .pure-menu-heading {
+  display: inline-grid;
+  place-items: center;
+  min-width: 40px;
+  height: 40px;
+  padding: 0;
+  color: var(--text-2);
+  font-size: 1.15rem;
+  text-transform: none;
+  border-radius: var(--r-pill);
+  transition: background .15s var(--ease), color .15s var(--ease);
+}
+
+:root body[class] .user-field a.pure-menu-heading:hover {
+  background: var(--surface-2);
+}
+
+/* text links in the bar (login / logout / username) become tonal pills */
+:root body[class] .user-field a.pure-menu-heading:not(:has(> .icon)):not(:has(> input)) {
+  padding: 0 1rem;
+  background: var(--accent-soft);
+  color: var(--on-accent-soft);
+  font-size: .9rem;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+:root body[class] .user-field a.pure-menu-heading:not(:has(> .icon)):hover {
+  background: var(--accent);
+  color: var(--on-accent) !important;
+}
+
+/* logged in: [theme] [notifications] [settings] [user chip] [log out] */
+:root body[class] .user-field #user_name {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  height: 34px;
+  margin-left: .35rem;
+  padding: 0 .85rem 0 .35rem;
+  background: var(--surface-2);
+  color: var(--text);
+  border-radius: var(--r-pill);
+  font-size: .88rem;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+:root body[class] .user-field #user_name::before {
+  content: "";
+  flex: none;
+  width: 26px;
+  height: 26px;
+  background-color: var(--accent);
+  -webkit-mask: var(--i-account_circle) center / contain no-repeat;
+  mask: var(--i-account_circle) center / contain no-repeat;
+}
+
+/* log out: <form><a class="pure-menu-heading"><input type="submit" value="Log out"></a></form>
+   rendered as an icon button; the input keeps its value as the accessible name */
+:root body[class] .user-field form {
+  display: flex;
+  margin: 0;
+}
+
+:root body[class] .user-field form > a.pure-menu-heading {
+  position: relative;
+  width: 40px;
+  min-width: 40px;
+  padding: 0;
+  background: transparent;
+  color: var(--text-2);
+}
+
+:root body[class] .user-field form > a.pure-menu-heading::before {
+  content: "";
+  width: 21px;
+  height: 21px;
+  background-color: currentColor;
+  -webkit-mask: var(--i-logout) center / contain no-repeat;
+  mask: var(--i-logout) center / contain no-repeat;
+}
+
+:root body[class] .user-field form > a.pure-menu-heading:hover {
+  background: var(--surface-2);
+  color: var(--accent) !important;
+}
+
+:root body[class] .user-field form > a.pure-menu-heading > input[type="submit"] {
+  /* !important: Invidious sets style="all:unset" inline on this input */
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: var(--r-pill) !important;
+  color: transparent !important;
+  font-size: 0 !important;
+  cursor: pointer !important;
+}
+
+/* unread notification count next to the bell */
+:root body[class] #notification_ticker {
+  position: relative;
+}
+
+:root body[class] #notification_ticker > span:not(:empty) {
+  position: absolute;
+  top: 3px;
+  right: 1px;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  box-sizing: border-box;
+  background: var(--accent);
+  color: var(--on-accent);
+  border-radius: var(--r-pill);
+  font-size: 10px;
+  font-weight: 750;
+  line-height: 17px;
+  text-align: center;
+}
+
+/* ---------- search homepage (default_home: Search) ---------- */
+
+:root body[class]:has(#search-widget) .feed-menu {
+  justify-content: center;
+}
+
+:root body[class] #search-widget {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap; /* .pure-g wraps: a wrapped column line is only as wide as its widest item */
+  align-items: center;
+  gap: 1.5rem;
+  margin: clamp(2rem, 12vh, 8rem) 0 3rem;
+}
+
+:root body[class] #search-widget > div {
+  width: 100%;
+  max-width: 640px;
+}
+
+:root body[class] #search-widget > .pure-u-1-4:empty {
+  display: none;
+}
+
+:root body[class] #search-widget #logo > h1 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .9rem;
+  margin: 0;
+  padding: 0;
+  color: var(--text);
+  font-size: clamp(2.4rem, 1.6rem + 3vw, 3.6rem);
+  font-weight: 800;
+  letter-spacing: -.035em;
+  line-height: 1;
+  text-transform: none;
+}
+
+:root body[class] #search-widget #logo > h1::before {
+  content: "";
+  flex: none;
+  width: 1.45em;
+  height: 1em;
+  border-radius: .28em;
+  background: var(--logo-bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23fff' d='M8 5v14l11-7z'/%3E%3C/svg%3E") center / 62% no-repeat;
+  box-shadow: 0 6px 18px rgba(81, 70, 216, .35);
+}
+
+:root body[class] #search-widget .searchbar .pure-form {
+  max-width: none;
+  box-shadow: var(--sh-2);
+  background: var(--surface);
+  border-color: var(--outline);
+}
+
+:root body[class] #search-widget .searchbar input[type="search"],
+:root body[class] #search-widget .searchbar #searchbox#searchbox {
+  height: 54px;
+  padding-left: 1.4rem;
+  font-size: 1.05rem;
+}
+
+:root body[class] #search-widget .searchbar #searchbutton {
+  width: 54px;
+  height: 54px;
+}
+
+/* ---------- chips: feed menu, channel tabs, sort, trending categories ---------- */
+
+:root body[class] .feed-menu {
+  justify-content: flex-start;
+  gap: .5rem;
+  margin: 0 0 1rem;
+  padding: 0 1rem;
+}
+
+:root body[class] .feed-menu-item[aria-current="page"] {
+  background: var(--accent);
+  color: var(--on-accent);
+  border-color: transparent;
+}
+
+:root body[class] .feed-menu-item[aria-current="page"]:hover {
+  background: var(--accent-hover);
+  color: var(--on-accent) !important;
+}
+
+:root body[class] .feed-menu-item,
+:root body[class] .pure-md-1-3 > a,
+:root body[class] .pure-md-1-3 > b {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  padding: 0 1.1rem;
+  background: var(--surface);
+  color: var(--text-2);
+  border: 1px solid var(--outline);
+  border-radius: var(--r-pill);
+  box-shadow: var(--sh-1);
+  font-size: .9rem;
+  font-weight: 600;
+  text-transform: none;
+  white-space: nowrap;
+  transition: background .15s var(--ease), color .15s var(--ease), box-shadow .15s var(--ease);
+}
+
+:root body[class] .feed-menu-item:hover,
+:root body[class] .pure-md-1-3 > a:hover {
+  background: var(--surface-2);
+  box-shadow: var(--sh-2);
+}
+
+/* active entry is rendered as <b> */
+:root body[class] .pure-md-1-3 > b {
+  background: var(--accent);
+  color: var(--on-accent);
+  border-color: transparent;
+}
+
+:root body[class] .pure-md-1-3 {
+  display: inline-block;
+  width: auto;
+  margin: .2rem .35rem .2rem 0;
+}
+
+:root body[class] .feed-menu-item {
+  flex: 0 0 auto;
+}
+
+/* feed menu with a single entry (anonymous + popular disabled) is just noise */
+:root body[class] .feed-menu:not(:has(> :nth-child(2))) {
+  display: none;
+}
+
+/* trending: categories sit in the right third of an otherwise empty row */
+:root body[class] .pure-g.h-box:has(> .pure-u-1-3 .pure-md-1-3) > .pure-u-2-3 {
+  display: none;
+}
+
+:root body[class] .pure-g.h-box:has(> .pure-u-1-3 .pure-md-1-3) > .pure-u-1-3 {
+  width: 100%;
+}
+
+:root body[class] .pure-g.h-box:has(> .pure-u-1-3 .pure-md-1-3) > .pure-u-1-3 > .pure-g {
+  justify-content: flex-start;
+  gap: .5rem;
+}
+
+/* channel / playlist header: [links + tabs] [sort] */
+:root body[class] .pure-g.h-box:has(> .pure-u-1-2 > .pure-md-1-3) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: .75rem 1.5rem;
+  margin-top: .5rem;
+}
+
+:root body[class] .pure-g.h-box:has(> .pure-u-1-2 > .pure-md-1-3) > .pure-u-1-2 {
+  width: auto;
+}
+
+:root body[class] .pure-g.h-box:has(> .pure-u-1-2 > .pure-md-1-3) > .pure-u-1-2:first-child {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  flex: 1 1 auto;
+}
+
+/* line break between the tabs and the external links */
+:root body[class] .pure-g.h-box:has(> .pure-u-1-2 > .pure-md-1-3) > .pure-u-1-2:first-child::after {
+  content: "";
+  order: 1;
+  flex-basis: 100%;
+  height: 0;
+}
+
+/* tabs (Videa / Shorts / Playlisty / Příspěvky) */
+:root body[class] .pure-u-1-2:first-child > .pure-md-1-3:not(:has(> a[href^="http"])) {
+  margin: 0;
+}
+
+:root body[class] .pure-u-1-2:first-child > .pure-md-1-3:not(:has(> a[href^="http"])) > :is(a, b) {
+  height: 42px;
+  padding: 0 1rem;
+  background: transparent;
+  color: var(--text-2);
+  border: 0;
+  border-bottom: 3px solid transparent;
+  border-radius: var(--r-xs) var(--r-xs) 0 0;
+  box-shadow: none;
+  font-size: .95rem;
+}
+
+:root body[class] .pure-u-1-2:first-child > .pure-md-1-3:not(:has(> a[href^="http"])) > a:hover {
+  background: var(--surface-2);
+  box-shadow: none;
+}
+
+:root body[class] .pure-u-1-2:first-child > .pure-md-1-3:not(:has(> a[href^="http"])) > b {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+/* external links (YouTube, switch instance) */
+:root body[class] .pure-u-1-2:first-child > .pure-md-1-3:has(> a[href^="http"]) {
+  order: 2;
+  margin: .5rem 1.1rem 0 1rem;
+}
+
+:root body[class] .pure-u-1-2:first-child > .pure-md-1-3:has(> a[href^="http"]) > a {
+  height: auto;
+  padding: 0;
+  background: none;
+  border: 0;
+  box-shadow: none;
+  color: var(--text-3);
+  font-size: .8rem;
+  font-weight: 550;
+}
+
+:root body[class] .pure-u-1-2:first-child > .pure-md-1-3:has(> a[href^="http"]) > a::after {
+  content: " \2197";
+}
+
+/* sort chips */
+:root body[class] .pure-g.h-box:has(> .pure-u-1-2 > .pure-md-1-3) > .pure-u-1-2:last-child > .pure-g {
+  display: flex;
+  justify-content: flex-end;
+  gap: .4rem;
+}
+
+:root body[class] .pure-u-1-2:last-child .pure-md-1-3 {
+  margin: 0;
+}
+
+:root body[class] .pure-u-1-2:last-child .pure-md-1-3 > :is(a, b) {
+  height: 32px;
+  padding: 0 .85rem;
+  font-size: .82rem;
+}
+
+/* ---------- buttons ---------- */
+
+:root body[class] .pure-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .4rem;
+  min-height: 38px;
+  margin: 0;
+  padding: .45rem 1.15rem;
+  background: var(--surface-2);
+  color: var(--text);
+  border: 1px solid transparent;
+  border-radius: var(--r-pill);
+  box-shadow: none;
+  font-family: inherit;
+  font-size: .9rem;
+  font-weight: 650;
+  line-height: 1.2;
+  white-space: nowrap;
+  transition: background .15s var(--ease), box-shadow .15s var(--ease), transform .15s var(--ease);
+}
+
+:root body[class] .pure-button:is(:hover, :focus) {
+  background: var(--surface-3) !important;
+  color: var(--text) !important;
+  border-color: transparent !important;
+  box-shadow: var(--sh-1);
+  background-image: none;
+}
+
+:root body[class] .pure-button-primary,
+:root body[class] a.pure-button-primary,
+:root body[class] button.pure-button-primary {
+  background: var(--accent);
+  color: var(--on-accent);
+  box-shadow: var(--sh-1);
+}
+
+:root body[class] .pure-button.pure-button-primary:is(:hover, :focus) {
+  background: var(--accent-hover) !important;
+  color: var(--on-accent) !important;
+  box-shadow: var(--sh-2);
+}
+
+:root body[class] .pure-button-secondary,
+:root body[class] .pure-button-secondary:not(.low-profile) {
+  background: var(--surface);
+  color: var(--text-2);
+  border: 1px solid var(--outline-strong);
+}
+
+:root body[class] .pure-button-secondary.low-profile {
+  min-height: 36px;
+  min-width: 36px;
+  padding: 0 .7rem;
+}
+
+:root body[class] .pure-button:active {
+  transform: scale(.97);
+}
+
+:root body[class] .pure-button .icon {
+  font-size: 1.1em;
+}
+
+:root body[class] .button-container {
+  gap: .5rem;
+}
+
+/* ---------- forms ---------- */
+
+:root body[class] input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="submit"]):not([type="hidden"]),
+:root body[class] select,
+:root body[class] textarea,
+:root body[class] .pure-form input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="submit"]),
+:root body[class] .pure-form select,
+:root body[class] .pure-form textarea {
+  background: var(--surface-2);
+  color: var(--text);
+  border: 1px solid var(--outline);
+  border-radius: var(--r-sm);
+  box-shadow: none;
+  font-family: inherit;
+  font-size: .95rem;
+  padding: .55rem .8rem;
+  transition: border-color .15s var(--ease), box-shadow .15s var(--ease), background .15s var(--ease);
+}
+
+:root body[class] .pure-form select,
+:root body[class] select {
+  height: auto;
+  min-height: 40px;
+  padding-right: 2.2rem;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%238b8f9c' d='M16.59 8.59 12 13.17 7.41 8.59 6 10l6 6 6-6z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right .55rem center;
+  background-size: 20px;
+}
+
+:root body[class] select option {
+  background: var(--surface);
+  color: var(--text);
+}
+
+:root body[class] .pure-form :is(input, select, textarea):focus,
+:root body[class] :is(input, select, textarea):focus {
+  outline: none;
+  background-color: var(--surface);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-soft);
+}
+
+:root body[class] .searchbar .pure-form input[type="search"]:focus {
+  box-shadow: none;
+  background: transparent;
+}
+
+:root body[class] input[type="checkbox"],
+:root body[class] input[type="radio"],
+:root body[class] input[type="range"] {
+  accent-color: var(--accent);
+}
+
+:root body[class] input[type="checkbox"],
+:root body[class] input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+:root body[class] .pure-form legend {
+  color: var(--text);
+  border-bottom: 0;
+}
+
+:root body[class] label {
+  color: var(--text-2);
+}
+
+/* ---------- cards: video / channel / playlist grids ---------- */
+
+:root body[class] #contents > .pure-g:has(> .pure-u-md-1-4),
+:root body[class] #contents .pure-g:has(> .pure-u-md-1-4 > .h-box > .thumbnail) {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+  gap: 1.25rem;
+  letter-spacing: normal;
+  margin-bottom: 1.5rem;
+}
+
+:root body[class] .pure-u-md-1-4:has(> .h-box) {
+  width: auto;
+  min-width: 0;
+}
+
+:root body[class] .pure-u-md-1-4 > .h-box {
+  height: 100%;
+  box-sizing: border-box;
+  padding: 0 0 .85rem;
+  background: var(--surface);
+  border: 1px solid var(--outline);
+  border-radius: var(--r-md);
+  box-shadow: var(--sh-1);
+  overflow: hidden;
+  transition: box-shadow .2s var(--ease), transform .2s var(--ease);
+}
+
+:root body[class] .pure-u-md-1-4 > .h-box:hover {
+  box-shadow: var(--sh-3);
+  transform: translateY(-2px);
+}
+
+:root body[class] .pure-u-md-1-4 > .h-box > .thumbnail {
+  overflow: hidden;
+  background: var(--surface-2);
+}
+
+:root body[class] .pure-u-md-1-4 > .h-box > .thumbnail img.thumbnail {
+  transition: transform .35s var(--ease);
+}
+
+:root body[class] .pure-u-md-1-4 > .h-box:hover > .thumbnail img.thumbnail {
+  transform: scale(1.035);
+}
+
+/* channel search results: avatar in <center>, then loose p / h5 children */
+:root body[class] .pure-u-md-1-4 > .h-box > a > center {
+  padding: 1.4rem 0 .4rem;
+  background: linear-gradient(to bottom, var(--surface-2), transparent);
+}
+
+:root body[class] .pure-u-md-1-4 > .h-box > a > center > img {
+  width: 96px !important;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--surface-3);
+  box-shadow: var(--sh-2);
+  object-fit: cover;
+}
+
+:root body[class] .pure-u-md-1-4 > .h-box > p,
+:root body[class] .pure-u-md-1-4 > .h-box > h5 {
+  margin: .3rem .9rem 0;
+}
+
+:root body[class] .pure-u-md-1-4 > .h-box > p:not(.channel-name) {
+  color: var(--text-2);
+  font-size: .85rem;
+  font-weight: 600;
+}
+
+:root body[class] .pure-u-md-1-4 > .h-box > h5 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  color: var(--text-3);
+  font-size: .8rem;
+  font-weight: 500;
+  line-height: 1.45;
+}
+
+:root body[class] .pure-u-md-1-4 > .h-box > a + .video-card-row .channel-name {
+  color: var(--text);
+  font-size: .95rem;
+  font-weight: 700;
+}
+
+:root body[class] .video-card-row {
+  margin: .55rem .9rem 0;
+}
+
+:root body[class] .pure-u-md-1-4 .video-card-row:first-of-type,
+:root body[class] .thumbnail + .video-card-row {
+  margin-top: .75rem;
+}
+
+/* title */
+:root body[class] .thumbnail + .video-card-row p,
+:root body[class] .pure-u-md-1-4 .h-box > a > p,
+:root body[class] .pure-u-md-1-4 .video-card-row > a > p:only-child {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  margin: 0;
+  color: var(--text);
+  font-size: .95rem;
+  font-weight: 650;
+  line-height: 1.35;
+}
+
+:root body[class] p.channel-name {
+  color: var(--text-2);
+  font-size: .85rem;
+  font-weight: 500;
+}
+
+:root body[class] p.video-data {
+  color: var(--text-3);
+  font-size: .78rem;
+  font-weight: 500;
+}
+
+:root body[class] .icon-buttons a {
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--r-pill);
+  color: var(--text-3);
+}
+
+:root body[class] .icon-buttons a:hover {
+  background: var(--surface-2);
+}
+
+/* overlays on thumbnails */
+:root body[class] .length,
+:root body[class] .top-left-overlay button {
+  padding: 2px 7px;
+  margin: 0;
+  color: #fff;
+  background-color: rgba(10, 10, 14, .78) !important;
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  border-radius: var(--r-xs);
+  font-size: .75rem;
+  font-weight: 650;
+  letter-spacing: .02em;
+}
+
+:root body[class] .top-left-overlay button {
+  border: 0;
+  cursor: pointer;
+}
+
+:root body[class] div.thumbnail > .top-left-overlay,
+:root body[class] div.thumbnail > .bottom-right-overlay {
+  font-size: 14px;
+}
+
+:root body[class] div.watched-indicator {
+  height: 4px;
+  background-color: var(--accent);
+}
+
+:root body[class] div.watched-overlay {
+  background-color: color-mix(in srgb, var(--bg) 45%, transparent);
+}
+
+:root body[class] .thumbnail-placeholder {
+  border: 2px dashed var(--outline-strong);
+  border-radius: var(--r-sm);
+}
+
+/* ---------- page navigation ---------- */
+
+:root body[class] .page-nav-container {
+  margin: .5rem 0 1.25rem;
+}
+
+/* ---------- watch page ---------- */
+
+:root body[class] #player-container {
+  /* invidious sizes this box with padding-bottom relative to the parent width;
+     size it by the player instead and cap it so a 16:9 video fits the viewport */
+  height: auto;
+  padding-bottom: 0 !important;
+  width: 100%;
+  max-width: min(100%, max(560px, calc((100vh - 15rem) * 16 / 9)));
+  margin: 0 auto 1rem;
+  box-sizing: border-box;
+}
+
+/* without JavaScript video.js never wraps the <video>: it stays a direct child of the
+   container, absolutely positioned by player.css. The container no longer gets its height
+   from padding-bottom (above), so give the bare element its own 16:9 box; the browser
+   then plays the MP4 source (itag 18) with native controls. */
+:root body[class] #player-container > video {
+  position: static !important;
+  display: block;
+  width: 100% !important;
+  height: auto !important;
+  aspect-ratio: 16 / 9;
+  background: #000 !important;
+  border-radius: var(--r-lg);
+  box-shadow: var(--sh-3);
+}
+
+:root body[class] #player-container > .player-dimensions.vjs-fluid,
+:root body[class] #player-container > .video-js.vjs-fluid {
+  padding-top: 56.25% !important;
+}
+
+:root body[class] #player-container .video-js,
+:root body[class] #player.video-js {
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  box-shadow: var(--sh-3);
+  background: #000;
+}
+
+/* ---------- player (video.js) ---------- */
+
+:root body[class] .video-js {
+  --vjs-accent: var(--logo-bg);
+  --vjs-fg: rgba(255, 255, 255, .92);
+  --vjs-hover: rgba(255, 255, 255, .14);
+  font-family: var(--font);
+  outline: 1px solid var(--outline);
+  outline-offset: -1px;
+}
+
+/* control bar: no grey slab, just a scrim; progress floats above the buttons */
+:root body[class] .video-js .vjs-control-bar {
+  height: 54px;
+  padding: 0 .6rem .35rem;
+  align-items: flex-end;
+  gap: .1rem;
+  background: linear-gradient(to top, rgba(0, 0, 0, .78) 0%, rgba(0, 0, 0, .35) 60%, rgba(0, 0, 0, 0) 100%);
+  color: var(--vjs-fg);
+}
+
+:root body[class] .video-js .vjs-control-bar > .vjs-spacer {
+  display: block;
+  flex: 1 1 auto;
+  order: 1;
+}
+
+:root body[class] .video-js .vjs-control {
+  width: 40px;
+  height: 40px;
+}
+
+:root body[class] .video-js .vjs-control-bar .vjs-button {
+  border-radius: 50%;
+  transition: background .15s var(--ease);
+}
+
+:root body[class] .video-js .vjs-control-bar .vjs-button:hover,
+:root body[class] .video-js .vjs-control-bar .vjs-menu-button:hover > .vjs-button,
+:root body[class] .video-js button:hover {
+  background: var(--vjs-hover);
+  color: #fff;
+}
+
+:root body[class] .video-js .vjs-control:focus,
+:root body[class] .video-js .vjs-control:focus-visible {
+  text-shadow: none;
+  outline: none;
+}
+
+:root body[class] .video-js .vjs-control:focus-visible {
+  box-shadow: 0 0 0 2px var(--vjs-accent);
+  border-radius: 50%;
+}
+
+/* progress: full width, thin, thickens on hover */
+:root body[class] .video-js .vjs-progress-control {
+  position: absolute;
+  left: .9rem;
+  right: .9rem;
+  top: -10px;
+  width: auto;
+  height: 20px;
+  min-width: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+}
+
+:root body[class] .video-js .vjs-progress-control .vjs-progress-holder {
+  height: 4px;
+  margin: 0;
+  width: 100%;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, .22);
+  transition: height .12s var(--ease);
+}
+
+:root body[class] .video-js .vjs-progress-control:hover .vjs-progress-holder {
+  height: 6px;
+  font-size: inherit;
+}
+
+:root body[class] .video-js .vjs-load-progress,
+:root body[class] .video-js .vjs-load-progress div {
+  background: rgba(255, 255, 255, .28);
+  border-radius: 4px;
+}
+
+:root body[class] .video-js .vjs-play-progress {
+  background-color: var(--vjs-accent);
+  border-radius: 4px;
+}
+
+:root body[class] .video-js .vjs-play-progress::before {
+  content: "" !important;
+  position: absolute;
+  top: 50%;
+  right: -7px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 0 3px var(--vjs-accent), 0 2px 6px rgba(0, 0, 0, .4);
+  transform: translateY(-50%) scale(0);
+  transition: transform .12s var(--ease);
+  font-size: 0;
+}
+
+:root body[class] .video-js .vjs-progress-control:hover .vjs-play-progress::before {
+  transform: translateY(-50%) scale(1);
+}
+
+:root body[class] .video-js .vjs-time-tooltip,
+:root body[class] .video-js .vjs-mouse-display .vjs-time-tooltip {
+  padding: 3px 7px;
+  background: rgba(16, 16, 22, .9);
+  color: #fff;
+  border-radius: var(--r-xs);
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+:root body[class] .video-js .vjs-play-progress .vjs-time-tooltip {
+  display: none;
+}
+
+:root body[class] .vjs-marker {
+  background-color: rgba(255, 255, 255, .85);
+  border-radius: 1px;
+}
+
+/* time: "0:40 / 3:55", remaining time is redundant */
+:root body[class] .video-js .vjs-time-control {
+  width: auto;
+  min-width: 0;
+  height: 40px;
+  padding: 0 .15rem;
+  line-height: 40px;
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--vjs-fg);
+}
+
+:root body[class] .video-js .vjs-current-time {
+  padding-left: .5rem;
+}
+
+:root body[class] .video-js .vjs-time-divider {
+  padding: 0 .25rem;
+  opacity: .6;
+}
+
+:root body[class] .video-js .vjs-remaining-time {
+  display: none;
+}
+
+/* playback rate shows text ("1x") */
+:root body[class] .video-js .vjs-playback-rate .vjs-playback-rate-value {
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 40px;
+}
+
+/* volume */
+:root body[class] .video-js .vjs-volume-panel {
+  height: 40px;
+  border-radius: var(--r-pill);
+  transition: width .2s var(--ease), background .15s var(--ease);
+}
+
+/* the generic 40px control width pinned this panel too, so the expanded slider
+   overflowed onto the time display; let it grow and push the time aside */
+:root body[class] .video-js .vjs-control-bar .vjs-volume-panel.vjs-volume-panel-horizontal {
+  width: 40px;
+}
+
+:root body[class] .video-js .vjs-control-bar .vjs-volume-panel.vjs-volume-panel-horizontal:is(:hover, :focus-within, .vjs-hover, .vjs-slider-active) {
+  width: 8.5rem;
+}
+
+:root body[class] .video-js .vjs-volume-panel .vjs-volume-control.vjs-volume-horizontal {
+  height: 40px;
+  transition: width .2s var(--ease), opacity .2s var(--ease);
+}
+
+:root body[class] .video-js .vjs-volume-panel:hover,
+:root body[class] .video-js .vjs-volume-panel.vjs-hover {
+  background: var(--vjs-hover);
+}
+
+:root body[class] .video-js .vjs-volume-panel .vjs-mute-control:hover {
+  background: transparent;
+}
+
+:root body[class] .video-js .vjs-volume-bar.vjs-slider-horizontal {
+  height: 4px;
+  margin: 18px .6rem 0 .2rem;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, .25);
+}
+
+:root body[class] .video-js .vjs-volume-level {
+  height: 4px;
+  border-radius: 4px;
+  background-color: #fff;
+}
+
+:root body[class] .video-js .vjs-volume-level::before {
+  content: "" !important;
+  position: absolute;
+  top: 50%;
+  right: -6px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #fff;
+  transform: translateY(-50%);
+  font-size: 0;
+}
+
+/* popup menus: speed, quality, captions */
+:root body[class] .video-js .vjs-menu-button-popup .vjs-menu,
+:root body[class] .video-js .vjs-playback-rate > .vjs-menu {
+  /* zero-width anchor centred on the button; the list sizes itself to its content */
+  left: 50%;
+  width: 0;
+  min-width: 0;
+  margin-bottom: 2.6rem;
+}
+
+:root body[class] .video-js .vjs-menu-button-popup .vjs-menu .vjs-menu-content {
+  left: 0;
+  bottom: 0;
+  width: max-content;
+  min-width: 6.5rem;
+  max-width: 18rem;
+  max-height: min(21rem, 70vh);
+  transform: translateX(-50%);
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: .35rem;
+  background: rgba(22, 22, 28, .88);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, .08);
+  border-radius: var(--r-sm);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .5);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, .25) transparent;
+}
+
+/* the rightmost menus would overflow the player edge when centred */
+:root body[class] .video-js .vjs-share-control .vjs-menu-content,
+:root body[class] .video-js .vjs-http-source-selector .vjs-menu .vjs-menu-content {
+  transform: translateX(-70%);
+}
+
+:root body[class] .video-js .vjs-menu li.vjs-menu-item,
+:root body[class] .video-js .vjs-menu li.vjs-menu-title {
+  margin: 1px 0;
+  padding: .4rem .85rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-radius: var(--r-xs);
+  font-size: 13px;
+  font-weight: 550;
+  line-height: 1.3;
+  text-align: left;
+  text-transform: none;
+  color: var(--vjs-fg);
+}
+
+:root body[class] .video-js .vjs-menu li.vjs-menu-title {
+  color: rgba(255, 255, 255, .55);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+:root body[class] .video-js .vjs-menu li.vjs-menu-item:hover,
+:root body[class] .video-js .vjs-menu li.vjs-menu-item:focus {
+  background: rgba(255, 255, 255, .1);
+  color: #fff;
+}
+
+:root body[class] .video-js .vjs-menu li.vjs-selected,
+:root body[class] .video-js .vjs-menu li.vjs-selected:hover,
+:root body[class] .video-js .vjs-menu li.vjs-selected:focus {
+  background: var(--vjs-accent);
+  color: #fff;
+}
+
+/* share puts its glyph on the button itself, not on a placeholder span */
+:root body[class] .video-js .vjs-share-control.vjs-icon-share {
+  position: relative;
+  cursor: pointer;
+}
+
+:root body[class] .video-js .vjs-share-control.vjs-icon-share::before {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* captions menu: "captions settings" entry separated from the track list */
+:root body[class] .video-js .vjs-menu li.vjs-texttrack-settings {
+  margin-bottom: .3rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, .1);
+  border-radius: var(--r-xs) var(--r-xs) 0 0;
+  color: rgba(255, 255, 255, .7);
+}
+
+/* captions settings dialog: glass panel centred over a dimmed player */
+:root body[class] .video-js .vjs-text-track-settings {
+  inset: 0;
+  height: auto;
+  background: rgba(6, 6, 10, .55);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  z-index: 3;
+}
+
+:root body[class] .video-js .vjs-text-track-settings .vjs-modal-dialog-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-sizing: border-box;
+  width: min(600px, calc(100% - 1.5rem));
+  height: auto;
+  max-height: calc(100% - 1.5rem);
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+  grid-template-columns: 1.2fr 1fr;
+  gap: .25rem 1.5rem;
+  padding: 1.1rem 1.25rem 1rem;
+  background: rgba(22, 22, 28, .94);
+  border: 1px solid rgba(255, 255, 255, .08);
+  border-radius: var(--r-md);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, .55);
+  font-family: var(--font);
+  font-size: 13px;
+  color: var(--vjs-fg);
+  scrollbar-width: thin;
+}
+
+:root body[class] .video-js .vjs-track-settings-colors,
+:root body[class] .video-js .vjs-track-settings-font {
+  display: flex;
+  flex-direction: column;
+  gap: .15rem;
+}
+
+:root body[class] .video-js .vjs-track-settings-font {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+:root body[class] .video-js .vjs-text-track-settings fieldset {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr));
+  align-items: center;
+  gap: .4rem;
+  margin: 0;
+  padding: .45rem 0;
+  border: 0;
+}
+
+:root body[class] .video-js .vjs-text-track-settings fieldset span {
+  display: contents;
+}
+
+:root body[class] .video-js .vjs-text-track-settings legend {
+  grid-column: 1 / -1;
+  width: 100%;
+  margin: 0 0 .1rem;
+  padding: 0;
+  color: rgba(255, 255, 255, .55);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+:root body[class] .video-js .vjs-text-track-settings select {
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+  min-height: 34px;
+  height: 34px;
+  margin: 0;
+  padding: 0 1.6rem 0 .6rem;
+  background-color: rgba(255, 255, 255, .08);
+  background-position: right .4rem center;
+  background-size: 18px;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: var(--r-xs);
+  font-size: 13px;
+  box-shadow: none;
+}
+
+:root body[class] .video-js .vjs-text-track-settings select:hover {
+  background-color: rgba(255, 255, 255, .13);
+}
+
+:root body[class] .video-js .vjs-text-track-settings select:focus {
+  background-color: rgba(255, 255, 255, .13);
+  border-color: var(--vjs-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--vjs-accent) 35%, transparent);
+}
+
+:root body[class] .video-js .vjs-text-track-settings select option {
+  background: #1d1d24;
+  color: #fff;
+}
+
+:root body[class] .video-js .vjs-track-settings-controls {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  position: static;
+  display: flex;
+  justify-content: flex-end;
+  gap: .5rem;
+  margin-top: .5rem;
+  padding-top: .8rem;
+  border-top: 1px solid rgba(255, 255, 255, .08);
+}
+
+:root body[class] .video-js .vjs-track-settings-controls button {
+  height: 34px;
+  margin: 0;
+  padding: 0 1.1rem;
+  border: 0;
+  border-radius: var(--r-pill);
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 650;
+  cursor: pointer;
+  transition: background .15s var(--ease);
+}
+
+:root body[class] .video-js .vjs-track-settings-controls .vjs-default-button {
+  background: transparent;
+  color: rgba(255, 255, 255, .8);
+}
+
+:root body[class] .video-js .vjs-track-settings-controls .vjs-default-button:hover {
+  background: rgba(255, 255, 255, .1);
+  color: #fff;
+}
+
+:root body[class] .video-js .vjs-track-settings-controls .vjs-done-button {
+  background: var(--vjs-accent);
+  color: #fff;
+}
+
+:root body[class] .video-js .vjs-track-settings-controls .vjs-done-button:hover {
+  background: color-mix(in srgb, var(--vjs-accent) 85%, #fff);
+}
+
+:root body[class] .video-js .vjs-text-track-settings .vjs-close-button {
+  top: .6rem;
+  right: .6rem;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .1);
+  color: #fff;
+}
+
+:root body[class] .video-js .vjs-text-track-settings .vjs-close-button:hover {
+  background: rgba(255, 255, 255, .2);
+}
+
+@media screen and (max-width: 560px) {
+  :root body[class] .video-js .vjs-text-track-settings .vjs-modal-dialog-content {
+    grid-template-columns: 1fr;
+    gap: 0;
+    padding: .8rem .9rem;
+  }
+
+  :root body[class] .video-js .vjs-track-settings-font {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  :root body[class] .video-js .vjs-track-settings-controls {
+    grid-row: 3;
+  }
+}
+
+/* cinema mode (html.iv-cinema, toggled by styler.js): full-bleed black band */
+:root body[class] .video-js .vjs-cinema-control {
+  order: 6;
+  cursor: pointer;
+}
+
+:root.iv-cinema {
+  overflow-x: clip;
+}
+
+:root.iv-cinema body[class] #player-container {
+  width: 100vw;
+  max-width: none;
+  margin: -.5rem calc(50% - 50vw) 1.25rem;
+  padding: 0;
+  background: #000;
+}
+
+:root.iv-cinema body[class] #player-container > .video-js.vjs-fluid,
+:root.iv-cinema body[class] #player-container > .player-dimensions.vjs-fluid {
+  padding-top: 0 !important;
+  height: min(56.25vw, calc(100vh - 6.5rem));
+  border-radius: 0;
+  box-shadow: none;
+  outline: 0;
+}
+
+@media screen and (max-width: 767px) {
+  :root body[class] .video-js .vjs-cinema-control {
+    display: none;
+  }
+}
+
+/* big play button */
+:root body[class] .video-js .vjs-big-play-button {
+  width: 76px;
+  height: 76px;
+  line-height: 76px;
+  margin: 0;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 0;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--vjs-accent) 88%, transparent);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .45);
+  transition: transform .2s var(--ease), background .2s var(--ease);
+}
+
+:root body[class] .video-js:hover .vjs-big-play-button,
+:root body[class] .video-js .vjs-big-play-button:focus {
+  background: var(--vjs-accent);
+  transform: translate(-50%, -50%) scale(1.06);
+}
+
+/* spinner */
+:root body[class] .video-js .vjs-loading-spinner {
+  border-color: rgba(255, 255, 255, .15);
+}
+
+:root body[class] .video-js .vjs-loading-spinner::before,
+:root body[class] .video-js .vjs-loading-spinner::after {
+  border-top-color: var(--vjs-accent);
+}
+
+/* storyboard preview on the progress bar */
+:root body[class] .vjs-vtt-thumbnail-display {
+  border: 2px solid rgba(255, 255, 255, .9) !important;
+  border-radius: var(--r-xs);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .5);
+}
+
+/* subtitles */
+:root body[class] .video-js .vjs-text-track-display > div > div > div {
+  background-color: rgba(8, 8, 12, .78) !important;
+  border-radius: var(--r-xs) !important;
+  padding: 2px 8px !important;
+}
+
+/* narrow players (small windows, sidebars): keep the control bar on one line */
+:root body[class] .video-js {
+  container-type: inline-size;
+}
+
+@container (max-width: 520px) {
+  :root body[class] .video-js .vjs-share-control,
+  :root body[class] .video-js .vjs-cinema-control,
+  :root body[class] .video-js .vjs-time-divider,
+  :root body[class] .video-js .vjs-duration {
+    display: none;
+  }
+}
+
+@container (max-width: 380px) {
+  :root body[class] .video-js .vjs-playback-rate,
+  :root body[class] .video-js .vjs-volume-panel .vjs-volume-control {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 520px) {
+  :root body[class] .video-js .vjs-control-bar {
+    padding: 0 .25rem .2rem;
+  }
+
+  :root body[class] .video-js .vjs-control {
+    width: 36px;
+  }
+
+  :root body[class] .video-js .vjs-progress-control {
+    left: .6rem;
+    right: .6rem;
+  }
+
+  :root body[class] .video-js .vjs-share-control {
+    display: none;
+  }
+}
+
+:root body[class] #contents > .h-box > h1 {
+  margin: .25rem 0 .75rem;
+  font-size: clamp(1.25rem, 1.1rem + .8vw, 1.75rem);
+  font-weight: 750;
+  line-height: 1.25;
+}
+
+:root body[class] #contents > .h-box > h1 a .icon {
+  font-size: .8em;
+  color: var(--text-3);
+}
+
+/* left column: info card */
+:root body[class] .pure-u-lg-1-5:has(#watch-on-youtube) > .h-box {
+  margin: 0 .5rem 1rem 0;
+  padding: 1rem 1.15rem;
+  background: var(--surface);
+  border: 1px solid var(--outline);
+  border-radius: var(--r-md);
+  box-shadow: var(--sh-1);
+  font-size: .88rem;
+  color: var(--text-2);
+}
+
+:root body[class] .pure-u-lg-1-5:has(#watch-on-youtube) > .h-box p {
+  margin: .45rem 0;
+}
+
+:root body[class] .pure-u-lg-1-5:has(#watch-on-youtube) a {
+  color: var(--accent);
+}
+
+:root body[class] .pure-u-lg-1-5:has(#watch-on-youtube) form {
+  margin: .75rem 0;
+  padding: .75rem 0;
+  border-top: 1px solid var(--outline);
+  border-bottom: 1px solid var(--outline);
+}
+
+:root body[class] .pure-u-lg-1-5:has(#watch-on-youtube) form select {
+  width: 100%;
+  margin: .25rem 0 .6rem;
+}
+
+:root body[class] .pure-u-lg-1-5:has(#watch-on-youtube) form .pure-button {
+  width: 100%;
+}
+
+:root body[class] #views,
+:root body[class] #likes,
+:root body[class] #dislikes {
+  display: flex;
+  align-items: center;
+  gap: .45rem;
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* centre column */
+:root body[class] .pure-u-lg-3-5 > .title {
+  align-items: center;
+  margin: 0 0 .75rem;
+}
+
+:root body[class] .channel-profile {
+  display: inline-flex;
+  align-items: center;
+  gap: .25rem .35rem;
+  min-width: 0;
+}
+
+:root body[class] .channel-profile > * {
+  font-size: 1.05rem;
+}
+
+:root body[class] .channel-profile > .icon,
+:root body[class] .channel-name-pronouns > .icon {
+  flex: none;
+  color: var(--text-3);
+}
+
+:root body[class] .channel-profile > img {
+  width: 48px;
+  height: 48px;
+  margin-right: .5rem;
+  box-shadow: var(--sh-1);
+}
+
+:root body[class] .channel-profile .channel-name {
+  color: var(--text);
+  font-weight: 700;
+}
+
+:root body[class] #subscribe.pure-button-primary {
+  padding: .5rem 1.35rem;
+}
+
+:root body[class] #published-date {
+  margin: 0 0 .5rem;
+  color: var(--text-2);
+  font-size: .9rem;
+}
+
+:root body[class] #description-box {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 1.15rem;
+  background: var(--surface-2);
+  border-radius: var(--r-md);
+  font-size: .92rem;
+  line-height: 1.55;
+}
+
+:root body[class] #descriptionWrapper a {
+  color: var(--accent);
+}
+
+:root body[class] #descexpansionbutton:not(:checked) ~ div {
+  -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent);
+  mask-image: linear-gradient(to bottom, #000 55%, transparent);
+}
+
+:root body[class] #descexpansionbutton ~ label {
+  margin-top: .75rem;
+  color: var(--text);
+  font-weight: 650;
+}
+
+/* comments */
+:root body[class] .comments {
+  max-width: none;
+}
+
+/* Reddit comments: hidden everywhere (switch under the comment count, and the option in
+   preferences; set default_user_preferences.comments to ["youtube", ""] in the Invidious
+   config as well) */
+:root body[class] #comments b:has(> a[data-comments="reddit"]),
+:root body[class] a[data-comments="reddit"],
+:root body[class] #try-reddit-comments-link,
+:root body[class] select[name^="comments"] option[value="reddit"] {
+  display: none !important;
+}
+
+:root body[class] #comments > div > h3 {
+  margin: .5rem 0;
+}
+
+:root body[class] #comments .pure-g {
+  align-items: flex-start;
+  margin: 0;
+  padding: .45rem 0;
+}
+
+:root body[class] #comments .channel-profile > img,
+:root body[class] #comments .channel-profile img {
+  /* !important: Invidious sets style="width:90%;margin-right:1em;margin-top:1em" inline,
+     so the width followed the column (2/24 of the comment) while the height was fixed */
+  flex: none;
+  width: 40px !important;
+  height: 40px;
+  aspect-ratio: 1;
+  margin: .15rem 0 0 !important;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+/* avatar column as wide as the avatar, text takes the rest */
+:root body[class] #comments .pure-g > .channel-profile {
+  flex: none;
+  width: 40px;
+  margin-right: .85rem;
+}
+
+:root body[class] #comments .pure-g > .channel-profile + div {
+  flex: 1 1 0;
+  width: auto;
+  min-width: 0;
+}
+
+:root body[class] #comments p {
+  margin: .2rem 0;
+  line-height: 1.5;
+}
+
+:root body[class] #comments p b a {
+  color: var(--text);
+  font-size: .88rem;
+}
+
+:root body[class] #comments p span {
+  color: var(--text-3);
+  font-size: .8rem;
+}
+
+:root body[class] #comments #replies {
+  padding: 0;
+}
+
+/* replies already sit in the text column; the 1/24 spacer only pushed them further */
+:root body[class] #comments #replies > .pure-u-1-24 {
+  display: none;
+}
+
+:root body[class] #comments #replies > .pure-u-23-24 {
+  width: 100%;
+}
+
+:root body[class] #comments #replies a {
+  color: var(--accent);
+  font-weight: 650;
+  font-size: .88rem;
+}
+
+:root body[class] a.channel-owner {
+  background-color: var(--accent);
+  color: var(--on-accent);
+  border-radius: var(--r-pill);
+  padding: 1px 8px;
+}
+
+/* right column: related videos */
+:root body[class] .pure-u-lg-1-5:not(:has(#watch-on-youtube)) > .h-box:not(#playlist) {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr));
+  gap: 1.1rem 1rem;
+  align-items: start;
+}
+
+:root body[class] .pure-u-lg-1-5:not(:has(#watch-on-youtube)) > .h-box:not(#playlist) > div:not(.pure-u-1) {
+  grid-column: 1 / -1;
+}
+
+:root body[class] .pure-u-lg-1-5:not(:has(#watch-on-youtube)) > .h-box:not(#playlist) > .pure-u-1 {
+  width: auto;
+  min-width: 0;
+}
+
+:root body[class] .pure-u-lg-1-5 .video-card-row > a > p {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  margin: 0;
+  color: var(--text);
+  font-size: .9rem;
+  font-weight: 650;
+  line-height: 1.35;
+}
+
+:root body[class] .pure-u-lg-1-5 h5 .pure-u-10-24 {
+  text-align: right;
+}
+
+:root body[class] .pure-u-lg-1-5:not(:has(#watch-on-youtube)) .pure-u-1:has(> .thumbnail),
+:root body[class] .pure-u-lg-1-5:not(:has(#watch-on-youtube)) .pure-u-1:has(> a > .thumbnail) {
+  margin-bottom: 1rem;
+}
+
+:root body[class] .pure-u-lg-1-5 .thumbnail {
+  border-radius: var(--r-sm);
+  overflow: hidden;
+  box-shadow: var(--sh-1);
+}
+
+:root body[class] .pure-u-lg-1-5 .thumbnail + .video-card-row,
+:root body[class] .pure-u-lg-1-5 .video-card-row {
+  margin: .5rem .1rem 0;
+}
+
+:root body[class] .pure-u-lg-1-5 h5 {
+  margin: .25rem .1rem 0;
+  color: var(--text-3);
+  font-weight: 500;
+}
+
+/* autoplay next ("Automaticky přehrát další") as an on/off switch */
+:root body[class] .pure-control-group:has(> input#continue) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  margin: 0;
+  padding: .55rem .8rem;
+  background: var(--surface);
+  border: 1px solid var(--outline);
+  border-radius: var(--r-pill);
+  box-shadow: var(--sh-1);
+}
+
+:root body[class] .pure-control-group:has(> input#continue) > label {
+  margin: 0;
+  color: var(--text);
+  font-size: .88rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+:root body[class] input#continue {
+  -webkit-appearance: none;
+  appearance: none;
+  flex: none;
+  width: 40px;
+  height: 22px;
+  margin: 0;
+  border: 0;
+  border-radius: var(--r-pill);
+  background:
+    radial-gradient(circle, #fff 0 7.5px, transparent 8px) 2px 50% / 18px 18px no-repeat,
+    var(--surface-3);
+  box-shadow: inset 0 0 0 1px var(--outline-strong);
+  cursor: pointer;
+  transition: background-position .2s var(--ease), background-color .2s var(--ease);
+}
+
+:root body[class] input#continue:checked {
+  background:
+    radial-gradient(circle, #fff 0 7.5px, transparent 8px) calc(100% - 2px) 50% / 18px 18px no-repeat,
+    var(--accent);
+  box-shadow: none;
+}
+
+:root body[class] input#continue:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+:root body[class] .pure-u-lg-1-5:not(:has(#watch-on-youtube)) > .h-box:not(#playlist) > div:not(.pure-u-1) > hr {
+  display: none;
+}
+
+/* ---------- channel page ---------- */
+
+:root body[class] #contents > .h-box:first-of-type > img,
+:root body[class] #contents > .h-box > img[src*="/ggpht/"] {
+  width: 100%;
+  border-radius: var(--r-lg);
+  box-shadow: var(--sh-2);
+}
+
+:root body[class] .channel-profile > img[src*="ggpht"] {
+  border-radius: 50%;
+}
+
+:root body[class] .title.flexible .channel-profile > img {
+  width: 64px;
+  height: 64px;
+}
+
+/* ---------- logged-in pages ---------- */
+
+/* toolbar rows: "Manage subscriptions | Watch history | RSS", "73 subscriptions | ... | Import/export" */
+:root body[class] #contents > .pure-g.h-box:has(> .pure-u-1-3 > h3 > a) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .5rem;
+  margin: 0 0 1rem;
+}
+
+:root body[class] #contents > .pure-g.h-box:has(> .pure-u-1-3 > h3 > a) > .pure-u-1-3 {
+  width: auto;
+}
+
+:root body[class] #contents > .pure-g.h-box:has(> .pure-u-1-3 > h3 > a) > .pure-u-1-3:last-child {
+  margin-left: auto;
+}
+
+:root body[class] #contents > .pure-g.h-box > .pure-u-1-3 > h3 {
+  margin: 0;
+  text-align: left !important;
+}
+
+:root body[class] #contents > .pure-g.h-box > .pure-u-1-3 > h3 > a {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  height: 36px;
+  padding: 0 1rem;
+  background: var(--surface);
+  color: var(--text-2);
+  border: 1px solid var(--outline);
+  border-radius: var(--r-pill);
+  box-shadow: var(--sh-1);
+  font-size: .88rem;
+  font-weight: 650;
+}
+
+:root body[class] #contents > .pure-g.h-box > .pure-u-1-3 > h3 > a:hover {
+  background: var(--surface-2);
+}
+
+:root body[class] #contents > .pure-g.h-box > .pure-u-1-3 > h3 > a:has(> .icon:only-child) {
+  justify-content: center;
+  width: 36px;
+  padding: 0;
+}
+
+:root body[class] #contents > .pure-g.h-box > .pure-u-1-3 > h3 #count {
+  color: var(--accent);
+}
+
+:root body[class] #contents > center {
+  margin: -.25rem 0 1rem;
+  color: var(--text-3);
+  font-size: .85rem;
+}
+
+/* watch history: thumbnail-only cards (+ an empty <p>), delete button on hover */
+:root body[class] .pure-u-md-1-4 > .h-box:not(:has(.video-card-row)) {
+  padding-bottom: 0;
+}
+
+:root body[class] .pure-u-md-1-4 > .h-box > p:empty {
+  display: none;
+}
+
+@media (hover: hover) {
+  :root body[class] .pure-u-md-1-4 > .h-box .top-left-overlay:has(form[action*="mark_unwatched"]) {
+    opacity: 0;
+    transition: opacity .15s var(--ease);
+  }
+
+  :root body[class] .pure-u-md-1-4 > .h-box:is(:hover, :focus-within) .top-left-overlay:has(form[action*="mark_unwatched"]) {
+    opacity: 1;
+  }
+}
+
+:root body[class] .top-left-overlay form[action*="mark_unwatched"] button:hover {
+  background-color: var(--danger) !important;
+  color: #fff !important;
+}
+
+/* subscription manager + token manager: one row per item */
+:root body[class] #contents > .h-box:has(form[action*="remove_subscriptions"], form[action*="revoke_token"]) {
+  margin: 0 0 .4rem;
+  padding: 0;
+}
+
+:root body[class] #contents > .h-box:has(form[action*="remove_subscriptions"], form[action*="revoke_token"]) > hr {
+  display: none;
+}
+
+:root body[class] #contents > .h-box:has(form[action*="remove_subscriptions"], form[action*="revoke_token"]) > .pure-g {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: .55rem .6rem .55rem 1.1rem;
+  background: var(--surface);
+  border: 1px solid var(--outline);
+  border-radius: var(--r-sm);
+  transition: background .15s var(--ease);
+}
+
+:root body[class] #contents > .h-box:has(form[action*="remove_subscriptions"], form[action*="revoke_token"]) > .pure-g:hover {
+  background: var(--surface-2);
+}
+
+:root body[class] #contents > .h-box:has(form[action*="remove_subscriptions"], form[action*="revoke_token"]) > .pure-g > div {
+  width: auto;
+}
+
+:root body[class] #contents > .h-box:has(form[action*="remove_subscriptions"], form[action*="revoke_token"]) > .pure-g > div:first-child {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+:root body[class] #contents > .h-box:has(form[action*="remove_subscriptions"], form[action*="revoke_token"]) > .pure-g > .pure-u-2-5:empty {
+  display: none;
+}
+
+:root body[class] #contents > .h-box:has(form[action*="remove_subscriptions"], form[action*="revoke_token"]) h3 {
+  margin: 0;
+  padding: 0 !important;
+  font-size: .95rem;
+  font-weight: 650;
+}
+
+:root body[class] #contents > .h-box:has(form[action*="remove_subscriptions"], form[action*="revoke_token"]) h3 > a {
+  color: var(--text);
+}
+
+:root body[class] form:is([action*="remove_subscriptions"], [action*="revoke_token"]) input[type="submit"] {
+  /* !important: Invidious sets style="all:unset" inline */
+  display: inline-block !important;
+  padding: .35rem .9rem !important;
+  border: 1px solid var(--outline-strong) !important;
+  border-radius: var(--r-pill) !important;
+  color: var(--text-2) !important;
+  font-size: .8rem !important;
+  font-weight: 650 !important;
+  cursor: pointer !important;
+  transition: background .15s var(--ease), color .15s var(--ease), border-color .15s var(--ease);
+}
+
+:root body[class] form:is([action*="remove_subscriptions"], [action*="revoke_token"]) input[type="submit"]:hover,
+:root body[class] form:is([action*="remove_subscriptions"], [action*="revoke_token"]) input[type="submit"]:focus-visible {
+  background: var(--danger) !important;
+  border-color: var(--danger) !important;
+  color: #fff !important;
+}
+
+/* token manager cells: <h4><code>token</code></h4> <h4>4 minutes ago</h4> */
+:root body[class] #contents > .h-box:has(form[action*="revoke_token"]) h4 {
+  margin: 0;
+  padding: 0 !important;
+  color: var(--text-3);
+  font-size: .82rem;
+  font-weight: 550;
+  text-align: right !important;
+  white-space: nowrap;
+}
+
+:root body[class] #contents > .h-box:has(form[action*="revoke_token"]) h4:has(> code) {
+  text-align: left !important;
+}
+
+:root body[class] #contents > .h-box:has(form[action*="revoke_token"]) h4 > code {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 0;
+  background: none;
+  color: var(--text-2);
+  font-size: .8rem;
+}
+
+/* .deleted: current session on load, or a row just revoked/removed */
+:root body[class] .pure-g.deleted {
+  background: color-mix(in srgb, var(--danger) 12%, var(--surface)) !important;
+  border-color: color-mix(in srgb, var(--danger) 45%, transparent) !important;
+}
+
+/* file inputs (import page) */
+:root body[class] input[type="file"] {
+  color: var(--text-2);
+  font-size: .85rem;
+}
+
+:root body[class] input[type="file"]::file-selector-button {
+  margin-right: .75rem;
+  padding: .35rem .9rem;
+  background: var(--surface-3);
+  color: var(--text);
+  border: 0;
+  border-radius: var(--r-pill);
+  font-family: inherit;
+  font-weight: 650;
+  cursor: pointer;
+  transition: background .15s var(--ease);
+}
+
+:root body[class] input[type="file"]::file-selector-button:hover {
+  background: var(--accent-soft);
+  color: var(--on-accent-soft);
+}
+
+/* ---------- playlists ---------- */
+
+/* destructive actions read as such everywhere */
+:root body[class] a.pure-button[href^="/delete_playlist"] {
+  color: var(--danger);
+  border-color: color-mix(in srgb, var(--danger) 45%, transparent);
+}
+
+:root body[class] a.pure-button[href^="/delete_playlist"]:is(:hover, :focus) {
+  background: var(--danger) !important;
+  border-color: var(--danger) !important;
+  color: #fff !important;
+}
+
+/* playlist page meta line: "author | 8 videos | Updated ... | Private" */
+:root body[class] #contents > .h-box > .pure-u-1-1 > b {
+  color: var(--text-3);
+  font-size: .9rem;
+  font-weight: 500;
+}
+
+:root body[class] #contents > .h-box > .pure-u-1-1 > b > a {
+  color: var(--text);
+  font-weight: 700;
+}
+
+:root body[class] #contents > .h-box > .pure-u-1-1 > b .icon {
+  color: var(--text-3);
+}
+
+/* ...split into chips by app.js */
+:root body[class] b.iv-meta {
+  display: inline-flex;
+  flex-wrap: wrap;
+  vertical-align: middle;
+  gap: .4rem;
+}
+
+/* edit view: chips and the privacy select on one line */
+:root body[class] form.pure-form[action^="/edit_playlist"] .pure-u-1-1:has(> b.iv-meta) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .4rem;
+}
+
+:root body[class] .iv-meta-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  height: 30px;
+  padding: 0 .8rem;
+  background: var(--surface);
+  color: var(--text-2);
+  border: 1px solid var(--outline);
+  border-radius: var(--r-pill);
+  font-size: .82rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+:root body[class] .iv-meta-chip:has(> a) {
+  padding: 0;
+}
+
+:root body[class] .iv-meta-chip > a {
+  display: inline-flex;
+  align-items: center;
+  height: 100%;
+  padding: 0 .8rem;
+  border-radius: inherit;
+  color: var(--text) !important;
+}
+
+:root body[class] .iv-meta-chip > a:hover {
+  background: var(--surface-2);
+}
+
+/* edit view: one editor card, title as an editable heading, actions at the bottom */
+:root body[class] form.pure-form[action^="/edit_playlist"] {
+  display: flex;
+  flex-direction: column;
+  gap: .9rem;
+  margin: 0 0 1.25rem;
+  padding: 1.25rem 1.5rem 1.1rem;
+  background: var(--surface);
+  border: 1px solid var(--outline);
+  border-radius: var(--r-lg);
+  box-shadow: var(--sh-2);
+}
+
+:root body[class] form.pure-form[action^="/edit_playlist"] > .h-box {
+  padding: 0;
+  margin: 0;
+}
+
+:root body[class] form.pure-form[action^="/edit_playlist"] > .title {
+  order: 1;
+  margin: 0;
+}
+
+:root body[class] form.pure-form[action^="/edit_playlist"] > .title > div {
+  width: 100%;
+}
+
+:root body[class] form.pure-form[action^="/edit_playlist"] > .title h3 {
+  margin: 0;
+}
+
+:root body[class] form.pure-form[action^="/edit_playlist"] input[name="title"] {
+  /* !important: the generic input rule has a long :not() chain and higher specificity */
+  width: 100%;
+  padding: .3rem .1rem !important;
+  background: transparent !important;
+  color: var(--text);
+  border: 0 !important;
+  border-bottom: 2px solid var(--outline-strong) !important;
+  border-radius: 0 !important;
+  font-size: clamp(1.25rem, 1.1rem + .6vw, 1.6rem) !important;
+  font-weight: 750;
+  letter-spacing: -.01em;
+}
+
+:root body[class] form.pure-form[action^="/edit_playlist"] input[name="title"]:focus {
+  background: transparent !important;
+  border-bottom-color: var(--accent) !important;
+  box-shadow: none !important;
+}
+
+:root body[class] form.pure-form[action^="/edit_playlist"] > .h-box:has(select[name="privacy"]) {
+  order: 2;
+}
+
+:root body[class] form.pure-form[action^="/edit_playlist"] > .h-box:has(select[name="privacy"]) b {
+  color: var(--text-3);
+  font-size: .88rem;
+  font-weight: 550;
+}
+
+:root body[class] form.pure-form[action^="/edit_playlist"] select[name="privacy"] {
+  margin-left: .25rem;
+  min-height: 34px;
+  font-size: .88rem;
+}
+
+:root body[class] form.pure-form[action^="/edit_playlist"] > .h-box:has(textarea) {
+  order: 3;
+}
+
+:root body[class] form.pure-form[action^="/edit_playlist"] textarea[name="description"] {
+  width: 100%;
+  min-height: 9rem;
+  height: auto !important;
+  margin: 0 !important;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+:root body[class] form.pure-form[action^="/edit_playlist"] > .h-box:has(.button-container) {
+  order: 4;
+  padding-top: .9rem;
+  border-top: 1px solid var(--outline);
+}
+
+:root body[class] form.pure-form[action^="/edit_playlist"] .button-container {
+  display: flex;
+  flex: 1 1 auto;
+  justify-content: flex-end;
+}
+
+/* [Delete] ............ [Cancel] [Save] */
+:root body[class] form.pure-form[action^="/edit_playlist"] .button-container > .pure-u:has(a[href^="/delete_playlist"]) {
+  order: -1;
+  margin-right: auto;
+}
+
+:root body[class] form.pure-form[action^="/edit_playlist"] .button-container > .pure-u:has(a[href^="/playlist"]) a {
+  background: transparent;
+  border-color: transparent;
+}
+
+:root body[class] form.pure-form[action^="/edit_playlist"] button[type="submit"] {
+  background: var(--accent);
+  color: var(--on-accent);
+  border-color: transparent;
+  box-shadow: var(--sh-1);
+}
+
+:root body[class] form.pure-form[action^="/edit_playlist"] button[type="submit"]:is(:hover, :focus) {
+  background: var(--accent-hover) !important;
+  color: var(--on-accent) !important;
+}
+
+/* watch page: playlist panel above the related videos (loaded by playlist_widget.js) */
+:root body[class] #playlist {
+  margin: 0 0 1.25rem;
+  background: var(--surface);
+  border: 1px solid var(--outline);
+  border-radius: var(--r-md);
+  box-shadow: var(--sh-1);
+  overflow: hidden;
+}
+
+:root body[class] #playlist:empty {
+  display: none;
+}
+
+:root body[class] #playlist > h3 {
+  margin: 0;
+  padding: .8rem 1rem;
+  border-bottom: 1px solid var(--outline);
+  font-size: 1rem;
+  font-weight: 750;
+}
+
+:root body[class] #playlist > h3 > a {
+  color: var(--text);
+}
+
+:root body[class] #playlist > hr {
+  display: none;
+}
+
+:root body[class] #playlist .playlist-restricted {
+  height: auto;
+  max-height: min(26rem, 55vh);
+  padding: .35rem;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+:root body[class] #playlist ol.pure-menu-list {
+  margin: 0;
+  padding: 0;
+  counter-reset: iv-pl;
+}
+
+:root body[class] #playlist li.pure-menu-item {
+  counter-increment: iv-pl;
+}
+
+:root body[class] #playlist li.pure-menu-item > a {
+  display: grid;
+  grid-template-columns: 1.4rem 7rem minmax(0, 1fr);
+  grid-template-rows: auto 1fr;
+  column-gap: .6rem;
+  align-items: start;
+  padding: .4rem .45rem .4rem .2rem;
+  color: var(--text);
+  border-radius: var(--r-sm);
+  white-space: normal;
+  transition: background .15s var(--ease);
+}
+
+:root body[class] #playlist li.pure-menu-item > a:hover {
+  background: var(--surface-2);
+}
+
+:root body[class] #playlist li.pure-menu-item > a::before {
+  content: counter(iv-pl);
+  grid-row: 1 / 3;
+  align-self: center;
+  color: var(--text-3);
+  font-size: .75rem;
+  font-weight: 650;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+:root body[class] #playlist li.pure-menu-item .thumbnail {
+  grid-row: 1 / 3;
+  position: relative;
+  border-radius: var(--r-xs);
+  overflow: hidden;
+  box-shadow: none;
+}
+
+:root body[class] #playlist li.pure-menu-item .thumbnail .length {
+  position: absolute;
+  right: 3px;
+  bottom: 3px;
+  padding: 0 4px;
+  font-size: .65rem;
+}
+
+:root body[class] #playlist li.pure-menu-item > a > p {
+  margin: 0;
+}
+
+:root body[class] #playlist li.pure-menu-item > a > p:not(:has(b)) {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  font-size: .82rem;
+  font-weight: 650;
+  line-height: 1.3;
+}
+
+:root body[class] #playlist li.pure-menu-item > a > p:has(b) {
+  margin-top: .2rem;
+  color: var(--text-3);
+  font-size: .75rem;
+}
+
+:root body[class] #playlist li.pure-menu-item > a > p > b {
+  font-weight: 550;
+}
+
+/* current video (aria-current is set by app.js) */
+:root body[class] #playlist li.pure-menu-item[aria-current] > a {
+  background: var(--accent-soft);
+}
+
+:root body[class] #playlist li.pure-menu-item[aria-current] > a::before {
+  content: "";
+  justify-self: center;
+  width: 12px;
+  height: 12px;
+  background-color: var(--accent);
+  -webkit-mask: var(--i-play) center / contain no-repeat;
+  mask: var(--i-play) center / contain no-repeat;
+}
+
+:root body[class] #playlist li.pure-menu-item[aria-current] > a > p:not(:has(b)) {
+  color: var(--on-accent-soft);
+}
+
+/* ---------- preferences / settings ---------- */
+
+:root body[class] form.pure-form-aligned {
+  max-width: 980px;
+  margin: 0 auto 2rem;
+  padding: .5rem 1.5rem 1.5rem;
+  background: var(--surface);
+  border: 1px solid var(--outline);
+  border-radius: var(--r-lg);
+  box-shadow: var(--sh-2);
+}
+
+:root body[class] form.pure-form-aligned legend {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  width: 100%;
+  margin: 1.5rem 0 .5rem;
+  padding: 0 0 .5rem;
+  color: var(--accent);
+  border-bottom: 1px solid var(--outline);
+  font-size: 1.05rem;
+  font-weight: 750;
+  letter-spacing: .01em;
+}
+
+:root body[class] .pure-form-aligned .pure-control-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .35rem .75rem;
+  margin: 0;
+  padding: .6rem .25rem;
+  border-radius: var(--r-sm);
+}
+
+:root body[class] .pure-form-aligned .pure-control-group:hover {
+  background: var(--surface-2);
+}
+
+:root body[class] .pure-form-aligned .pure-control-group label {
+  flex: 0 0 min(19em, 100%);
+  width: auto;
+  margin: 0;
+  text-align: left;
+  color: var(--text);
+  font-weight: 550;
+}
+
+:root body[class] .pure-form-aligned .pure-control-group select,
+:root body[class] .pure-form-aligned .pure-control-group input[type="text"],
+:root body[class] .pure-form-aligned .pure-control-group input[type="number"] {
+  min-width: 12em;
+}
+
+/* "Data preferences": groups holding a single link become a navigation list */
+:root body[class] .pure-form-aligned .pure-control-group:has(> a:only-child) {
+  padding: 0;
+}
+
+:root body[class] .pure-form-aligned .pure-control-group > a:only-child {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: .7rem .5rem .7rem .25rem;
+  color: var(--text);
+  font-weight: 550;
+}
+
+:root body[class] .pure-form-aligned .pure-control-group > a:only-child::after {
+  content: "";
+  flex: none;
+  width: 20px;
+  height: 20px;
+  background-color: var(--text-3);
+  -webkit-mask: var(--i-chevron_right) center / contain no-repeat;
+  mask: var(--i-chevron_right) center / contain no-repeat;
+}
+
+:root body[class] .pure-form-aligned .pure-control-group > a[href^="/delete_account"],
+:root body[class] .pure-form-aligned .pure-control-group > a[href^="/delete_account"]:hover {
+  color: var(--danger) !important;
+}
+
+:root body[class] .pure-form-aligned .pure-control-group > a[href^="/delete_account"]::after {
+  background-color: var(--danger);
+}
+
+:root body[class] .pure-form-aligned .pure-controls {
+  margin: 1.5rem 0 0;
+}
+
+:root body[class] .pure-form-message-inline {
+  color: var(--text-3);
+}
+
+:root body[class] .preference-description {
+  color: var(--text-3);
+  font-size: .85rem;
+}
+
+/* ---------- login / register ---------- */
+
+:root body[class] .pure-u-lg-3-5 > .h-box:has(> form.pure-form-stacked) {
+  max-width: 420px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: var(--surface);
+  border: 1px solid var(--outline);
+  border-radius: var(--r-lg);
+  box-shadow: var(--sh-3);
+}
+
+:root body[class] .pure-u-lg-3-5 > .h-box > form.pure-form-stacked label {
+  margin: .9rem 0 .35rem;
+  color: var(--text);
+  font-weight: 600;
+  font-size: .9rem;
+}
+
+:root body[class] .pure-u-lg-3-5 > .h-box > form.pure-form-stacked input:not([type="checkbox"]):not([type="hidden"]) {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 44px;
+}
+
+:root body[class] .pure-u-lg-3-5 > .h-box > form.pure-form-stacked .pure-button {
+  width: 100%;
+  min-height: 44px;
+  margin-top: 1.25rem;
+}
+
+:root body[class] .pure-u-lg-3-5 > .h-box > form.pure-form-stacked img {
+  max-width: 100%;
+  border-radius: var(--r-sm);
+}
+
+/* ---------- search filters ---------- */
+
+:root body[class] #filters {
+  margin: 0 0 .5rem;
+}
+
+:root body[class] #filters-collapse {
+  background: var(--surface);
+  border: 1px solid var(--outline);
+  border-radius: var(--r-md);
+  box-shadow: var(--sh-1);
+}
+
+:root body[class] #filters-collapse > summary {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  margin: 0;
+  padding: .75rem 1.1rem;
+  color: var(--text);
+  font-size: 1rem;
+  font-weight: 650;
+  line-height: 1.4;
+  list-style: none;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* search.css draws "[ + ]" / "[ - ]" with lopsided margins: use a chevron instead */
+:root body[class] #filters-collapse > summary::before {
+  content: "";
+  flex: none;
+  width: 22px;
+  height: 22px;
+  margin: 0;
+  padding: 0;
+  background-color: currentColor;
+  -webkit-mask: var(--i-expand_more) center / contain no-repeat;
+  mask: var(--i-expand_more) center / contain no-repeat;
+  transition: transform .2s var(--ease);
+}
+
+:root body[class] #filters-collapse[open] > summary::before {
+  transform: rotate(180deg);
+}
+
+:root body[class] #filters-collapse[open] > summary {
+  border-bottom: 1px solid var(--outline);
+}
+
+:root body[class] #filters-box {
+  margin: 0;
+  padding: .75rem 1.1rem 1rem;
+  background: transparent;
+}
+
+/* ---------- misc ---------- */
+
+:root body[class] .error-card {
+  background: var(--surface);
+  border: 1px solid var(--outline);
+  border-radius: var(--r-lg);
+  box-shadow: var(--sh-2);
+}
+
+:root body[class] .error-issue-template {
+  background: var(--surface-2);
+  border-radius: var(--r-sm);
+}
+
+:root body[class] pre,
+:root body[class] code {
+  background: var(--surface-2);
+  border-radius: var(--r-xs);
+}
+
+:root body[class] .music-item + .music-item {
+  border-top-color: var(--outline);
+}
+
+:root body[class] footer {
+  margin-top: auto;
+  padding: 2rem 0 1.5rem;
+  color: var(--text-3);
+  font-size: .82rem;
+  border-top: 1px solid var(--outline);
+}
+
+:root body[class] footer a {
+  color: var(--text-2) !important;
+}
+
+:root body[class] footer a:hover {
+  color: var(--accent) !important;
+}
+
+:root body[class] footer .icon {
+  margin-right: .3rem;
+  color: var(--text-3);
+}
+
+:root body[class] .loading {
+  color: var(--accent);
+}
+
+/* ---------- motion ---------- */
+
+/* page transitions between Invidious pages (cross-document view transitions, CSS only;
+   browsers without support just navigate normally) */
+@view-transition {
+  navigation: auto;
+}
+
+:root body[class] .navbar {
+  view-transition-name: iv-navbar;
+}
+
+:root body[class] #player-container {
+  view-transition-name: iv-player;
+}
+
+:root body[class] .pure-u-lg-1-5:not(:has(#watch-on-youtube)):has(.thumbnail) {
+  view-transition-name: iv-related;
+}
+
+::view-transition-group(*) {
+  animation-duration: .32s;
+  animation-timing-function: cubic-bezier(.2, .7, .2, 1);
+}
+
+@keyframes iv-page-out {
+  to { opacity: 0; transform: translateY(-6px); }
+}
+
+@keyframes iv-page-in {
+  from { opacity: 0; transform: translateY(10px); }
+}
+
+::view-transition-old(root) {
+  animation: iv-page-out .18s cubic-bezier(.4, 0, 1, 1) both;
+}
+
+::view-transition-new(root) {
+  animation: iv-page-in .3s cubic-bezier(.2, .7, .2, 1) .06s both;
+}
+
+/* the player keeps its aspect while morphing between normal and cinema size */
+::view-transition-old(iv-player),
+::view-transition-new(iv-player) {
+  height: 100%;
+  object-fit: cover;
+}
+
+/* <details> (search filters) open/close: CSS-only where interpolate-size is supported */
+:root {
+  interpolate-size: allow-keywords;
+}
+
+:root body[class] #filters-collapse::details-content {
+  block-size: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: block-size .32s cubic-bezier(.2, .7, .2, 1), opacity .25s ease,
+    content-visibility .32s allow-discrete;
+}
+
+:root body[class] #filters-collapse[open]::details-content {
+  block-size: auto;
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @view-transition {
+    navigation: none;
+  }
+
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
+/* ---------- watch page, wide screens: YouTube-style [player | related] ---------- */
+
+@media screen and (min-width: 1024px) {
+  :root body[class]:has(#player-container) #contents {
+    --side: clamp(320px, 24vw, 420px);
+    display: grid;
+    /* main column is as wide as a 16:9 player that fits the viewport height */
+    grid-template-columns: minmax(0, calc((100vh - 13rem) * 16 / 9)) var(--side);
+    grid-template-rows: auto auto auto auto 1fr auto;
+    justify-content: center;
+    align-items: start;
+    column-gap: 1.75rem;
+  }
+
+  :root body[class]:has(#player-container) #contents > .navbar,
+  :root body[class]:has(#player-container) #contents > footer {
+    grid-column: 1 / -1;
+  }
+
+  :root body[class]:has(#player-container) #contents > .navbar {
+    grid-row: 1;
+  }
+
+  :root body[class]:has(#player-container) #contents > footer {
+    grid-row: 6;
+  }
+
+  :root body[class]:has(#player-container) #contents > #player-container {
+    grid-row: 2;
+    grid-column: 1;
+    max-width: none;
+    margin: 0 0 1rem;
+  }
+
+  :root body[class]:has(#player-container) #contents > .h-box:has(> h1) {
+    grid-row: 3;
+    grid-column: 1;
+    padding: 0;
+  }
+
+  /* dissolve the pure 1/5 3/5 1/5 row: its columns become grid items */
+  :root body[class]:has(#player-container) #contents > .pure-g:not(.navbar) {
+    display: contents;
+  }
+
+  :root body[class]:has(#player-container) #contents > .pure-g > div {
+    width: auto;
+    min-width: 0;
+  }
+
+  :root body[class]:has(#player-container) #contents > .pure-g > .pure-u-lg-3-5 {
+    grid-row: 4;
+    grid-column: 1;
+  }
+
+  :root body[class]:has(#player-container) #contents > .pure-g > .pure-u-lg-3-5 > .h-box {
+    padding: 0;
+  }
+
+  :root body[class]:has(#player-container) #contents > .pure-g > .pure-u-lg-1-5:has(#watch-on-youtube) {
+    grid-row: 5;
+    grid-column: 1;
+    align-self: start;
+    margin-top: 1rem;
+  }
+
+  :root body[class] .pure-u-lg-1-5:has(#watch-on-youtube) > .h-box {
+    margin: 0 0 1.5rem;
+  }
+
+  /* related column runs from the top of the player to the footer */
+  :root body[class]:has(#player-container) #contents > .pure-g > .pure-u-lg-1-5:not(:has(#watch-on-youtube)) {
+    grid-row: 2 / 6;
+    grid-column: 2;
+  }
+
+  :root body[class] .pure-u-lg-1-5:not(:has(#watch-on-youtube)) > .h-box:not(#playlist) {
+    grid-template-columns: 1fr;
+    gap: .7rem;
+    padding: 0;
+  }
+
+  /* compact related items: thumbnail left, text right */
+  :root body[class] .pure-u-lg-1-5:not(:has(#watch-on-youtube)) > .h-box:not(#playlist) > .pure-u-1 {
+    display: grid;
+    grid-template-columns: 44% 1fr;
+    grid-template-rows: auto 1fr;
+    column-gap: .65rem;
+    align-items: start;
+  }
+
+  :root body[class] .pure-u-lg-1-5:not(:has(#watch-on-youtube)) > .h-box:not(#playlist) > .pure-u-1 > .thumbnail {
+    grid-row: 1 / 3;
+    grid-column: 1;
+  }
+
+  :root body[class] .pure-u-lg-1-5:not(:has(#watch-on-youtube)) > .h-box:not(#playlist) > .pure-u-1 > .video-card-row {
+    grid-column: 2;
+    margin: 0;
+  }
+
+  :root body[class] .pure-u-lg-1-5:not(:has(#watch-on-youtube)) > .h-box:not(#playlist) > .pure-u-1 > .video-card-row p {
+    font-size: .85rem;
+  }
+
+  :root body[class] .pure-u-lg-1-5:not(:has(#watch-on-youtube)) > .h-box:not(#playlist) > .pure-u-1 > h5 {
+    grid-column: 2;
+    display: flex;
+    flex-direction: column;
+    gap: .1rem;
+    margin: .3rem 0 0;
+    font-size: .76rem;
+    line-height: 1.35;
+  }
+
+  :root body[class] .pure-u-lg-1-5:not(:has(#watch-on-youtube)) > .h-box:not(#playlist) > .pure-u-1 > h5 > div,
+  :root body[class] .pure-u-lg-1-5:not(:has(#watch-on-youtube)) > .h-box:not(#playlist) > .pure-u-1 > h5 > div * {
+    width: auto;
+    text-align: left !important;
+  }
+
+  :root body[class] .pure-u-lg-1-5:not(:has(#watch-on-youtube)) .length {
+    font-size: .68rem;
+    padding: 1px 5px;
+  }
+
+  /* cinema: player spans both columns, related moves below it */
+  :root.iv-cinema body[class]:has(#player-container) #contents > #player-container {
+    grid-column: 1 / -1;
+    /* the grid area is centred on the page, so 50% - 50vw reaches both edges */
+    width: 100vw;
+    margin: -.5rem calc(50% - 50vw) 1.25rem;
+  }
+
+  :root.iv-cinema body[class]:has(#player-container) #contents > .pure-g > .pure-u-lg-1-5:not(:has(#watch-on-youtube)) {
+    grid-row: 3 / 6;
+  }
+}
+
+/* ---------- responsive ---------- */
+
+/* watch page below the 3-column breakpoint: video details first, info card last */
+@media screen and (max-width: 1023px) {
+  :root body[class] .pure-g:has(> .pure-u-lg-1-5 #watch-on-youtube) {
+    display: flex;
+    flex-direction: column;
+  }
+
+  :root body[class] .pure-g > .pure-u-lg-3-5:has(#description-box) {
+    order: 1;
+  }
+
+  /* dissolve the related column so the playlist panel can sit right under the
+     title (before the channel row) while the related videos stay below the details */
+  :root body[class] .pure-g > .pure-u-lg-1-5:not(:has(#watch-on-youtube)) {
+    display: contents;
+  }
+
+  :root body[class] .pure-g > .pure-u-lg-1-5:not(:has(#watch-on-youtube)) > #playlist {
+    order: 0;
+    margin: 0 0 1rem;
+  }
+
+  :root body[class] .pure-g > .pure-u-lg-1-5:not(:has(#watch-on-youtube)) > .h-box:not(#playlist) {
+    order: 2;
+  }
+
+  :root body[class] .pure-g > .pure-u-lg-1-5:has(#watch-on-youtube) {
+    order: 3;
+  }
+
+  :root body[class] .pure-u-lg-1-5:has(#watch-on-youtube) > .h-box {
+    margin-right: 0;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  :root body[class] .navbar {
+    top: .35rem;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "logo actions"
+      "search search";
+    gap: .5rem .5rem;
+    margin: .35rem 0 1rem;
+    padding: .5rem .5rem .55rem .85rem;
+    border-radius: var(--r-md);
+  }
+
+  :root body[class] .navbar > div {
+    display: flex;
+    justify-content: flex-start;
+    margin: 0;
+  }
+
+  :root body[class] .navbar > div:first-child {
+    grid-area: logo;
+  }
+
+  :root body[class] .navbar > .searchbar {
+    grid-area: search;
+  }
+
+  :root body[class] .navbar > .user-field {
+    grid-area: actions;
+    justify-content: flex-end;
+    font-size: 1rem;
+  }
+
+  :root body[class] .navbar > .searchbar > form {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+  }
+
+  :root body[class] .user-field > :not(:last-child) {
+    margin-right: 0 !important;
+  }
+
+  /* logged in, 5 actions next to the logo: icon-only user chip, tighter buttons */
+  :root body[class] .user-field {
+    gap: .1rem;
+  }
+
+  :root body[class] .user-field a.pure-menu-heading,
+  :root body[class] .user-field form > a.pure-menu-heading {
+    min-width: 36px;
+    width: 36px;
+    height: 36px;
+  }
+
+  :root body[class] .user-field a.pure-menu-heading:not(:has(> .icon)):not(:has(> input)) {
+    width: auto;
+  }
+
+  :root body[class] .user-field #user_name {
+    justify-content: center;
+    width: 34px;
+    margin-left: .2rem;
+    padding: 0;
+    gap: 0;
+    font-size: 0;
+  }
+
+  :root body[class] #contents > .pure-g:has(> .pure-u-md-1-4),
+  :root body[class] #contents .pure-g:has(> .pure-u-md-1-4 > .h-box > .thumbnail) {
+    gap: 1rem;
+  }
+
+  :root body[class] .pure-u-lg-1-5:has(#watch-on-youtube) > .h-box {
+    margin-right: 0;
+  }
+
+  :root body[class] .title.flexible {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .75rem;
+  }
+
+  :root body[class] .title.flexible > .flex-left,
+  :root body[class] .title.flexible > .flex-right {
+    width: auto;
+    flex: 1 1 auto;
+  }
+
+  :root body[class] .title.flexible > .flex-right {
+    margin: 0;
+    justify-content: flex-end;
+  }
+
+  :root body[class] .channel-profile > img,
+  :root body[class] .title.flexible .channel-profile > img {
+    width: 42px;
+    height: 42px;
+  }
+
+  :root body[class] #player-container .video-js,
+  :root body[class] #player.video-js {
+    border-radius: var(--r-md);
+  }
+
+  :root body[class] form.pure-form-aligned {
+    padding: .25rem 1rem 1.25rem;
+    border-radius: var(--r-md);
+  }
+
+  :root body[class] .pure-form-aligned .pure-control-group label {
+    flex-basis: 100%;
+  }
+
+  :root body[class] .pure-u-lg-3-5 > .h-box:has(> form.pure-form-stacked) {
+    margin: 1rem auto;
+    padding: 1.5rem 1.25rem;
+  }
+}
+
+@media screen and (max-width: 420px) {
+  :root body[class] .navbar .index-link {
+    font-size: 1.05rem;
+  }
+
+  :root body[class] .feed-menu-item {
+    flex: 0 0 auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root body[class] * {
+    transition: none !important;
+  }
+}
