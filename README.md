@@ -36,6 +36,9 @@ Watch page:
 - A small service worker retries video segments that failed, so a short hiccup on the
   companion doesn't freeze playback for half a minute. video.js 7 doesn't retry segments
   on its own.
+- Captions served by the companion load again. Invidious trims YouTube's track names
+  (`English - en` becomes `English`) and the companion then can't find the track and answers
+  404, so the script asks for the track by language code instead.
 - Reddit comments are hidden, and the `try-reddit-comments-link` TypeError from `watch.js`
   is gone.
 

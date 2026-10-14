@@ -17,6 +17,7 @@
  *  10. service worker /sw.js: retries failed video segment requests (see sw.js)
  *  11. watch.js ends with getElementById("try-reddit-comments-link").onclick = ..., but that
  *      link only exists on videos with comments turned off: TypeError on every other video
+ *  12. captions served by the companion: ask for the track by language code (see below)
  */
 (function () {
   "use strict";
@@ -379,6 +380,51 @@
     });
   }
 
+  /* ---------- 12. captions from the companion ---------- */
+
+  // YouTube names caption tracks "Language - Track name" ("English - en"). Invidious trims that
+  // to the language and the player asks the companion for ?label=English, but the companion
+  // compares the label with the full name and answers 404. It also accepts ?lang=<code>, so
+  // look the codes up in /api/v1/captions (same order as the tracks) and re-add the tracks
+  // with lang. Two tracks in the same language both resolve to the first one.
+  function captionsByLanguage() {
+    var id = new URLSearchParams(location.search).get("v");
+    var player = window.videojs && window.videojs.getPlayer && window.videojs.getPlayer("player");
+    if (!id || !player || !window.fetch) return;
+    player.ready(function () {
+      fetch("/api/v1/captions/" + encodeURIComponent(id), { credentials: "same-origin" })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (data) {
+          if (!data || !data.captions) return;
+          var list = player.remoteTextTracks();
+          var tracks = [];
+          for (var i = 0; i < list.length; i++) {
+            var t = list[i];
+            if ((t.kind === "captions" || t.kind === "subtitles") && t.src &&
+                t.src.indexOf("/companion/") >= 0 && t.src.indexOf("label=") >= 0 &&
+                !/[?&]lang=/.test(t.src)) tracks.push(t);
+          }
+          // pair tracks with the API entries in order, matching labels
+          var j = 0;
+          tracks.forEach(function (t) {
+            while (j < data.captions.length && data.captions[j].label !== t.label) j++;
+            var entry = data.captions[j++];
+            if (!entry || !entry.languageCode) return;
+            var showing = t.mode === "showing";
+            player.removeRemoteTextTrack(t);
+            var added = player.addRemoteTextTrack({
+              kind: t.kind,
+              label: t.label,
+              language: entry.languageCode,
+              src: t.src + "&lang=" + encodeURIComponent(entry.languageCode)
+            }, false);
+            if (showing && added && added.track) added.track.mode = "showing";
+          });
+        })
+        .catch(function () { /* keep the original tracks */ });
+    });
+  }
+
   /* ---------- boot ---------- */
 
   onReady(function () {
@@ -391,6 +437,7 @@
     playlistCurrent();
     playlistMetaChips();
     serviceWorkerRegister();
+    captionsByLanguage();
     cinemaButtonAdd();
     if (!cinemaButton && document.getElementById("player")) {
       // player.js may still be initialising on slow devices

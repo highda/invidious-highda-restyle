@@ -464,10 +464,6 @@ html,
 
 /* ---------- search homepage (default_home: Search) ---------- */
 
-:root body[class]:has(#search-widget) .feed-menu {
-  justify-content: center;
-}
-
 :root body[class] #search-widget {
   display: flex;
   flex-direction: column;
@@ -533,7 +529,7 @@ html,
 /* ---------- chips: feed menu, channel tabs, sort, trending categories ---------- */
 
 :root body[class] .feed-menu {
-  justify-content: flex-start;
+  justify-content: center;
   gap: .5rem;
   margin: 0 0 1rem;
   padding: 0 1rem;
@@ -598,7 +594,7 @@ html,
   display: none;
 }
 
-/* trending: categories sit in the right third of an otherwise empty row */
+/* trending: categories sit in the right third of an otherwise empty row; centred like the feed menu */
 :root body[class] .pure-g.h-box:has(> .pure-u-1-3 .pure-md-1-3) > .pure-u-2-3 {
   display: none;
 }
@@ -608,8 +604,12 @@ html,
 }
 
 :root body[class] .pure-g.h-box:has(> .pure-u-1-3 .pure-md-1-3) > .pure-u-1-3 > .pure-g {
-  justify-content: flex-start;
+  justify-content: center;
   gap: .5rem;
+}
+
+:root body[class] .pure-g.h-box:has(> .pure-u-1-3 .pure-md-1-3) .pure-md-1-3 {
+  margin: 0;
 }
 
 /* channel / playlist header: [links + tabs] [sort] */
@@ -3046,10 +3046,9 @@ html,
   :root body[class] .pure-g:has(> .pure-u-lg-1-5 #watch-on-youtube) {
     display: flex;
     flex-direction: column;
-  }
-
-  :root body[class] .pure-g > .pure-u-lg-3-5:has(#description-box) {
-    order: 1;
+    /* .pure-g wraps; a wrapped column line is as wide as its widest item, which pushed
+       every block past the screen edge on phones */
+    flex-wrap: nowrap;
   }
 
   /* dissolve the related column so the playlist panel can sit right under the
@@ -3064,11 +3063,39 @@ html,
   }
 
   :root body[class] .pure-g > .pure-u-lg-1-5:not(:has(#watch-on-youtube)) > .h-box:not(#playlist) {
-    order: 2;
+    order: 7;
   }
 
+  /* the main column holds [channel row] and one box with [date, description, hr, comments];
+     dissolve both so the info card (links, download, stats) can go between the description
+     and the comments: playlist, channel, date, description, info card, comments, related */
+  :root body[class] .pure-g > .pure-u-lg-3-5:has(#description-box),
+  :root body[class] .pure-g > .pure-u-lg-3-5:has(#description-box) > .h-box:not(.title) {
+    display: contents;
+  }
+
+  :root body[class] .pure-u-lg-3-5 > .title { order: 1; }
+  :root body[class] .pure-u-lg-3-5 > .h-box > #published-date { order: 2; }
+  :root body[class] .pure-u-lg-3-5 > .h-box > #description-box { order: 3; }
+  :root body[class] .pure-g > .pure-u-lg-1-5:has(#watch-on-youtube) { order: 4; }
+  :root body[class] .pure-u-lg-3-5 > .h-box > hr { order: 5; }
+  :root body[class] .pure-u-lg-3-5 > .h-box > #comments { order: 6; }
+
+  /* the dissolved .h-box no longer pads its children: put them on the same 1em inset as the
+     cards around them, so description, info card and comments line up */
+  :root body[class] .pure-u-lg-3-5 > .h-box > :is(#published-date, #description-box, hr, #comments) {
+    margin-left: 1rem;
+    margin-right: 1rem;
+    box-sizing: border-box;
+  }
+
+  /* info card (links, download, stats) exactly as wide as the description card */
   :root body[class] .pure-g > .pure-u-lg-1-5:has(#watch-on-youtube) {
-    order: 3;
+    margin: 1rem 0 0;
+  }
+
+  :root body[class] .pure-g > .pure-u-lg-1-5:has(#watch-on-youtube) > .h-box {
+    margin: 0 1rem 1rem;
   }
 
   :root body[class] .pure-u-lg-1-5:has(#watch-on-youtube) > .h-box {
@@ -3200,6 +3227,36 @@ html,
 @media screen and (max-width: 420px) {
   :root body[class] .navbar .index-link {
     font-size: 1.05rem;
+  }
+}
+
+/* narrow phones: smaller playlist thumbnails so titles get room */
+@media screen and (max-width: 399px) {
+  :root body[class] #playlist li.pure-menu-item > a {
+    grid-template-columns: 1.1rem 5.5rem minmax(0, 1fr);
+    column-gap: .5rem;
+  }
+}
+
+/* smallest phones (320 px): logo text + three actions + the login pill do not fit next to
+   each other; keep only the badge and tighten the actions */
+@media screen and (max-width: 359px) {
+  :root body[class] .navbar {
+    padding-left: .6rem;
+  }
+
+  :root body[class] .navbar > * {
+    min-width: 0;
+  }
+
+  :root body[class] .navbar .index-link {
+    font-size: 0;
+    gap: 0;
+  }
+
+  :root body[class] .user-field a.pure-menu-heading:not(:has(> .icon)):not(:has(> input)) {
+    padding: 0 .75rem;
+    font-size: .85rem;
   }
 
   :root body[class] .feed-menu-item {
